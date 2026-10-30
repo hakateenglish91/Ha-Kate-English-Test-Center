@@ -8,7 +8,7 @@ body.kid{
 --font-display:"Baloo 2","Be Vietnam Pro",system-ui,sans-serif;
 color-scheme:light;
 background:
-radial-gradient(60px 26px at 12% 9%,#fff 98%,transparent),
+radial-gradient(60px 26px at 12% 9%,#fff 98%,transparent) ,
 radial-gradient(80px 30px at 16% 11%,#fff 98%,transparent),
 radial-gradient(70px 26px at 82% 16%,#fff 98%,transparent),
 radial-gradient(90px 30px at 87% 18%,#fff 98%,transparent),
@@ -83,6 +83,8 @@ body.kid .trow{border-radius:18px;box-shadow:0 4px 0 var(--line)}
 .gq{font-family:var(--font-display);font-weight:800;font-size:clamp(1.25rem,4.6vw,1.7rem);line-height:1.3;max-width:34ch}
 .gq.big{font-size:clamp(2rem,8vw,2.8rem);color:var(--gc)}
 .gq.small{font-size:1rem;color:var(--muted)}
+.gins{font-family:var(--font-display);font-weight:800;font-size:1.05rem;color:var(--gc);background:var(--gb);border-radius:99px;padding:3px 14px}
+.ghint{letter-spacing:.2em;font-family:var(--font-display);font-size:1.15rem}
 .gq.word{font-size:clamp(2.2rem,9vw,3rem);letter-spacing:.06em}
 .gq .gap{display:inline-block;min-width:1.2em;border-bottom:4px dashed var(--gc);color:var(--gc)}
 .gq .blank{color:var(--gc)}
@@ -176,7 +178,7 @@ body.kid .trow{border-radius:18px;box-shadow:0 4px 0 var(--line)}
 .c-wrong summary{font-weight:800;cursor:pointer}.c-wrong ul{margin:8px 0 0;padding-left:18px}
 .c-btns{justify-content:center;margin-top:14px}
 @media print{body *{visibility:hidden}.cert,.cert *{visibility:visible}.cert{position:fixed;inset:0;margin:0}}
-.galcard{display:flex;align-items:center;gap:14px;flex-wrap:wrap;text-decoration:none;color:#2b2d42;background:linear-gradient(110deg,#fff1c9,#ffe8e5 55%,#e2f3fd);border-radius:22px;padding:14px 16px;margin-bottom:18px;border:2px solid #f0e3c4;box-shadow:0 5px 0 #f0e3c4}
+.galcard{display:flex;align-items:center;gap:14px;flex-wrap:wrap;text-decoration:none;color:var(--ink);background:linear-gradient(110deg,#fff1c9,#ffe8e5 55%,#e2f3fd);border-radius:22px;padding:14px 16px;margin-bottom:18px;border:2px solid #f0e3c4;box-shadow:0 5px 0 #f0e3c4}
 .galcard:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .gal-ic{font-size:2.4rem}
 .gal-t{display:flex;flex-direction:column;flex:1 1 200px;min-width:0}.gal-t b{font-family:var(--font-display);font-size:1.25rem;color:#2b2d42}.gal-t span{font-size:.88rem;color:#5d6077}
@@ -197,3 +199,69 @@ body.kid .trow{border-radius:18px;box-shadow:0 4px 0 var(--line)}
 .lb-x,.lb-p,.lb-n{position:fixed;border:0;background:#fff;border-radius:50%;width:44px;height:44px;font-size:1.4rem;cursor:pointer}
 .lb-x{top:14px;right:14px}.lb-p{left:10px;top:50%}.lb-n{right:10px;top:50%}
 @media (prefers-reduced-motion:reduce){body.kid *,.gm *{animation:none!important}}
+.st-fish{height:auto;background:none;overflow:visible}
+.tank{position:relative;height:max(560px,calc(100vh - 150px));border-radius:26px;overflow:hidden;background:linear-gradient(#bfe8ff 0 15%,#6fd0f7 15%,#2fa4dc 60%,#1478b8);border:4px solid #1f9fd8;box-shadow:0 7px 0 #1478b8}
+.tank-top{position:absolute;inset:0 0 auto 0;height:15%;z-index:3}
+.bucket{position:absolute;left:12px;top:8px;font-size:2.6rem;display:flex;align-items:flex-end;gap:2px}
+.bucket b{font-family:var(--font-display);font-size:1.1rem;background:#fff;border-radius:99px;padding:0 8px;color:#1478b8}
+.bucket.bounce{animation:pop .5s}
+.boat2{position:absolute;right:20px;top:6px;font-size:2.6rem;transition:left .45s,right .45s;animation:float 3s ease-in-out infinite}
+.boat2 b{position:absolute;left:10px;top:-24px;font-size:1.7rem;font-weight:400}
+.line{position:absolute;top:58px;width:2px;height:0;background:#333;transition:height .45s;z-index:4}
+.line::after{content:"🪝";position:absolute;bottom:-14px;left:-9px;font-size:1rem}
+.qpanel{position:absolute;left:50%;transform:translateX(-50%);top:8px;width:min(560px,calc(100% - 150px));background:rgba(255,255,255,.95);border-radius:20px;padding:8px 12px 10px;display:grid;gap:4px;justify-items:center;text-align:center;z-index:5;box-shadow:0 5px 0 rgba(0,0,0,.12)}
+@media (max-width:560px){.qpanel{width:calc(100% - 16px);top:64px}.tank-top{height:70px}}
+.qpanel .gpicbox.sm{font-size:3rem}
+.qpanel .gq.big{font-size:clamp(1.6rem,6vw,2.2rem)}
+.water{position:absolute;left:0;right:0;bottom:0;top:42%}
+@media (max-width:560px){.water{top:48%}}
+.fishopt{position:absolute;left:0;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;animation:swim linear infinite alternate;z-index:2}
+.fishopt .fbody{font-size:3.4rem;line-height:1;display:block;animation:flip linear infinite}
+.fishopt .ftag{margin-top:-6px;background:#fff;border:3px solid #ffc93c;border-radius:14px;padding:2px 10px;font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:#2b2d42;box-shadow:0 3px 0 #f0b400;white-space:nowrap}
+.fishopt .ftag .op{font-size:2.2rem}
+.fishopt:disabled{cursor:default}
+@keyframes swim{from{left:2%}to{left:calc(98% - 120px)}}
+@keyframes flip{0%,49.99%{transform:scaleX(-1)}50%,100%{transform:scaleX(1)}}
+.fishopt.hooked{animation:none!important;transition:top .6s ease-in,left .4s}
+.fishopt.hooked .fbody{animation:wiggle .3s infinite}
+@keyframes wiggle{50%{transform:rotate(-20deg)}}
+.fishopt.toBucket{transition:all .8s;left:10px!important;top:-60px!important;transform:scale(.4);opacity:0}
+.fishopt.thrown{animation:throw 1s forwards!important}
+@keyframes throw{0%{transform:translate(0,0) rotate(0)}40%{transform:translate(60px,-60px) rotate(180deg)}100%{transform:translate(120px,320px) rotate(400deg);opacity:0}}
+.fishopt.glow .ftag{border-color:#2f9e44;box-shadow:0 0 0 6px rgba(47,158,68,.35);background:#d3f9d8}
+.fishopt.glow{animation-play-state:paused}
+.island .stone{position:absolute;transform:translate(-50%,-50%);width:38px;height:28px;border-radius:50%;background:#e9ecef;border:3px solid #fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;color:#868e96;font-size:.85rem;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.island .stone.done{background:#ffd43b;color:#7a5300}.island .stone.goal{width:46px;height:46px;font-size:1.6rem;background:#fff}
+.hero3{position:absolute;transform:translate(-50%,-110%);font-size:2.4rem;transition:left .45s,top .45s;z-index:2}
+.hero3.hop{animation:hop .45s}.hero3.trip{animation:trip .5s}
+@keyframes hop{50%{transform:translate(-50%,-170%)}}
+@keyframes trip{30%{transform:translate(-50%,-110%) rotate(-25deg)}60%{transform:translate(-50%,-110%) rotate(15deg)}}
+.stepn{position:absolute;right:8px;bottom:6px;background:#fff;border-radius:99px;padding:1px 10px;font-family:var(--font-display);font-weight:800;font-size:.85rem;color:#2f9e44}
+.tugbox .team.pull{animation:lean .5s}
+@keyframes lean{50%{transform:translateX(-10px) rotate(-12deg) scale(1.12)}}
+.tugbox .team.b.pull{animation:leanb .5s}
+@keyframes leanb{50%{transform:translateX(10px) rotate(12deg) scale(1.12)}}
+.rope .mid{position:absolute;left:50%;top:-14px;height:38px;border-left:3px dashed #e03131}
+.rope::after{display:none}
+.wins{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-family:var(--font-display);font-weight:800}
+.hearts{font-size:.9rem;letter-spacing:1px}
+.hero2.hit{animation:shake .4s}
+.shot{position:absolute;top:40%;font-size:1.8rem;opacity:0;pointer-events:none}
+.shot.toBoss{animation:toBoss .45s forwards}.shot.toHero{animation:toHero .45s forwards}
+@keyframes toBoss{0%{left:22%;opacity:1}100%{left:72%;opacity:1}}
+@keyframes toHero{0%{left:72%;opacity:1}100%{left:22%;opacity:1}}
+.mrow{position:absolute;top:10px;left:0;right:0;display:flex;justify-content:space-around}
+.mo{font-size:2.4rem;transition:transform .4s;transform:translateY(calc(var(--d) * 14px)) scale(calc(1 + var(--d) * .12));animation:bob 1.8s ease-in-out infinite}
+.mo.gone{visibility:hidden}
+.mo.boom{animation:zap .6s forwards}
+.mo.laugh{animation:shake .5s}
+.laser{position:absolute;bottom:50px;width:4px;height:0;background:linear-gradient(#fff,#ffd43b);border-radius:2px;box-shadow:0 0 10px #ffd43b}
+.laser.fire{height:calc(100% - 90px);transition:height .25s}
+.tower{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column-reverse;align-items:center;gap:2px}
+.tower i{display:block;width:70px;height:10px;border-radius:3px;border:2px solid rgba(0,0,0,.15)}
+.tower i.drop{animation:dropin .4s}
+@keyframes dropin{from{transform:translateY(-80px);opacity:0}}
+.tower.wobble{animation:shake .5s}
+.crane{position:absolute;left:10px;top:8px;font-size:2.4rem}
+.bricks-n{position:absolute;right:10px;top:8px;background:#fff;border-radius:99px;padding:1px 10px;font-family:var(--font-display);font-weight:800}
+.buildbg{display:block}

@@ -6,6 +6,7 @@ function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function
 function $(id) { return document.getElementById(id); }
 function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+/* ---------- hình ---------- */
 var SVG = {
 desk: '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="18" width="52" height="8" rx="2" fill="#c98b4f"/><rect x="10" y="26" width="6" height="30" rx="2" fill="#8a5a2b"/><rect x="48" y="26" width="6" height="30" rx="2" fill="#8a5a2b"/><rect x="28" y="26" width="20" height="14" rx="2" fill="#b7793f"/><circle cx="38" cy="33" r="2.2" fill="#5b3a1a"/><rect x="18" y="10" width="12" height="8" rx="1" fill="#3ba9ee"/></svg>',
 elbow: '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 8 L30 38 L54 30" stroke="#f2c29b" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8 L30 38 L54 30" stroke="#e0a77c" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/><circle cx="30" cy="38" r="11" fill="none" stroke="#e53935" stroke-width="3.5"/><circle cx="56" cy="30" r="6" fill="#f2c29b"/></svg>',
@@ -16,6 +17,7 @@ if (!p) return "";
 if (/^svg:/.test(p)) return '<span class="' + (cls || "") + ' svgpic">' + (SVG[p.slice(4)] || "") + "</span>";
 return '<span class="' + (cls || "") + '">' + esc(p) + "</span>";
 }
+/* ---------- âm thanh ---------- */
 var AC = null, SOUND = lsGet("hk-snd") !== false;
 function beep(ok) {
 if (!SOUND) return;
@@ -35,9 +37,11 @@ function confetti(box) {
 if (!box) return; var c = ["#ff6b5b", "#ffc93c", "#3ba9ee", "#22b8a5", "#7c5cff", "#7bc96f"];
 for (var i = 0; i < 18; i++) { var s = document.createElement("i"); s.className = "cf"; s.style.left = (10 + Math.random() * 80) + "%"; s.style.background = c[i % 6]; s.style.animationDelay = (Math.random() * 0.2) + "s"; s.style.setProperty("--dx", (Math.random() * 120 - 60) + "px"); box.appendChild(s); setTimeout(function (x) { x.remove(); }.bind(null, s), 1300); }
 }
+/* ---------- danh sách game của unit ---------- */
 function keyOf(x) { return x.k + "|" + x.b.b + "|" + x.u.n; }
 function hasGames(x) { return !!(x && GS.SPEC[keyOf(x)]); }
-var LVNAME = ["", "Dễ", "Khá", "Trung bình", "Khó", "Rất khó"];
+var LVNAME = ["", "Easy", "OK", "Medium", "Hard", "Super hard"];
+var LVVI = ["", "Dễ", "Khá", "Trung bình", "Khó", "Rất khó"];
 function renderList(box, x, arg) {
 var key = keyOf(x), games = GS.gamesFor(key), best = lsGet("hk-best") || {};
 box.innerHTML = '<div class="gl-head"><span class="gl-ic">🎮</span><div><h2>Game ôn tập</h2><p>' + esc(GS.SPEC[key].kinder ? "Mỗi game ôn một chữ cái – chơi lần lượt từ game 1 nhé!" : "5 game từ dễ đến khó – game sau có thêm câu khó hơn.") + '</p></div></div>'
@@ -46,12 +50,13 @@ var qn = g.plan.reduce(function (s, p) { return s + p[0]; }, 0), top = Math.max.
 var b = best[key + "|" + g.n], sk = GS.SKINS[g.skin];
 return '<a class="gcard sk-' + g.skin + '" data-go="play" data-arg="' + esc(arg + "~" + g.n) + '" href="#" target="_self">'
 + '<span class="gnum">' + g.n + '</span><span class="gico">' + sk.ic + '</span>'
-+ '<b>' + esc(g.name) + '</b><span class="gmeta">' + qn + ' câu · ' + LVNAME[top] + '</span>'
++ '<b>' + esc(g.name) + '</b><span class="gmeta">' + qn + ' câu · ' + LVVI[top] + '</span>'
 + '<span class="gstars">' + "★★★★★".slice(0, top) + '<i>' + "★★★★★".slice(top) + '</i></span>'
 + (b ? '<span class="gbest">Kỷ lục: ' + b.sc + "/" + b.tot + " " + "⭐".repeat(b.st) + '</span>' : '<span class="gbest new">Chưa chơi</span>')
 + '<span class="btn small gplay">Chơi ▶</span></a>';
 }).join("") + '</div>';
 }
+/* ---------- chơi game ---------- */
 var ST = null, timers = [];
 function later(f, ms) { var t = setTimeout(f, ms); timers.push(t); return t; }
 function clearT() { timers.forEach(clearTimeout); timers = []; try { speechSynthesis.cancel(); } catch (e) {} }
@@ -82,102 +87,183 @@ box.innerHTML = '<div class="gm"><div class="gm-top"><button class="gtb" type="b
 $("gQuit").onclick = function () { stop(); HK().go("games", arg); };
 $("gSnd").onclick = function () { SOUND = !SOUND; lsSet("hk-snd", SOUND); this.textContent = SOUND ? "🔊" : "🔇"; };
 ST.clock = setInterval(function () { var s = Math.floor((Date.now() - ST.start) / 1000); var t = $("gTime"); if (t) t.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 1000);
+initStage();
 show();
 };
 ["gName", "gCls"].forEach(function (id) { $(id).addEventListener("keydown", function (e) { if (e.key === "Enter") $("gGo").click(); }); });
 }
-function stage() {
-var g = ST.g, n = ST.qs.length, i = ST.i, h = "";
-if (g.skin === "fish") h = '<div class="sea"><span class="boat">🛶<b>🧒🎣</b></span><span class="bub b1"></span><span class="bub b2"></span><span class="bub b3"></span><span class="weed w1">🌿</span><span class="weed w2">🪸</span><span class="weed w3">🐚</span><span class="weed w4">🦀</span></div>';
-else if (g.skin === "path") {
-var s0 = Math.floor(i / 10) * 10, cnt = Math.min(10, n - s0), dots = "";
-for (var d = 0; d < cnt; d++) { var k = s0 + d; dots += '<span class="pd' + (k < i ? " done" : k === i ? " cur" : "") + '" style="--x:' + (5 + d * 90 / Math.max(1, cnt - 1)) + '%;--y:' + (d % 2 ? 76 : 50) + '%">' + (k === i ? '<b class="hero">🐰</b>' : "") + (k + 1) + '</span>'; }
-h = '<div class="island"><span class="dino">🦕</span><span class="tree t1">🌴</span><span class="tree t2">🌋</span>' + dots + '</div>';
+function initStage() {
+var g = ST.g, el = $("gStage"); ST.pos = 0; ST.tug = 0; ST.wins = 0; ST.boss = 0; ST.hp = 5; ST.hearts = 3; ST.wave = 0; ST.alive = 5; ST.bricks = 0; ST.fish = 0;
+el.className = "gm-stage st-" + g.skin;
+if (g.skin === "fish") {
+el.innerHTML = '<div class="tank"><div class="tank-top"><span class="bucket" id="gBucket">🪣<b id="gFishN">0</b></span><span class="boat2" id="gBoat">⛵<b>🧒🎣</b></span><span class="line" id="gLine"></span></div><div class="qpanel" id="gQ"></div><div class="water" id="gWater"><span class="weed w1">🌿</span><span class="weed w2">🪸</span><span class="weed w3">🐚</span><span class="weed w4">🦀</span><span class="bub b1"></span><span class="bub b2"></span><span class="bub b3"></span></div></div>';
+$("gCard").hidden = true;
+} else if (g.skin === "path") {
+el.innerHTML = '<div class="island"><span class="dino">🦕</span><span class="tree t1">🌴</span><span class="tree t2">🌋</span><div class="stones" id="gStones"></div><span class="hero3" id="gHero">🐰</span><span class="stepn" id="gStep"></span></div>';
 } else if (g.skin === "tug") {
-var pos = Math.max(-5, Math.min(5, ST.tug));
-h = '<div class="tugbox"><div class="team a">🦁<b>Đội của con</b></div><div class="rope"><span class="flag" style="left:' + (50 - pos * 9) + '%">🚩</span></div><div class="team b">🐯<b>Đội bạn</b></div></div>';
+el.innerHTML = '<div class="tugbox"><div class="team a" id="gTA">🦁<b>My team</b></div><div class="rope"><span class="flag" id="gFlag">🚩</span><span class="mid"></span></div><div class="team b" id="gTB">🐯<b>Team B</b></div><span class="wins" id="gWins"></span></div>';
 } else if (g.skin === "boss") {
-var b = BOSSES[ST.boss % BOSSES.length], hp = "";
+el.innerHTML = '<div class="candy"><div class="fighter" id="gHeroBox"><span class="hero2" id="gHero2">🦖</span><span class="hearts" id="gHearts"></span><b>' + esc(ST.name || "You") + '</b></div><div class="vs">VS</div><div class="fighter"><span class="boss" id="gBoss"></span><span class="hp" id="gHP"></span><b id="gBossN"></b></div><span class="shot" id="gShot"></span></div>';
+} else if (g.skin === "monster") {
+el.innerHTML = '<div class="mons-bg"><div class="mrow" id="gMons"></div><span class="ship" id="gShip">🚀</span><span class="laser" id="gLaser"></span></div>';
+} else {
+el.innerHTML = '<div class="buildbg"><div class="tower" id="gTower"></div><span class="crane">🏗️</span><span class="bricks-n" id="gBrN"></span></div>';
+}
+drawStage();
+}
+function drawStage() {
+var g = ST.g, n = ST.qs.length;
+if (g.skin === "path") {
+var W = 8, start = Math.max(0, Math.min(ST.pos - 2, n + 1 - W)), h = "";
+for (var d = 0; d < W && start + d <= n; d++) { var k = start + d; h += '<span class="stone' + (k === n ? " goal" : "") + (k < ST.pos ? " done" : "") + '" style="left:' + (6 + d * 12.5) + '%;top:' + (d % 2 ? 70 : 52) + '%">' + (k === n ? "🏰" : k) + "</span>"; }
+$("gStones").innerHTML = h; ST.pstart = start;
+var hd = ST.pos - start; $("gHero").style.left = (6 + hd * 12.5) + "%"; $("gHero").style.top = (hd % 2 ? 70 : 52) + "%";
+$("gStep").textContent = "Step " + ST.pos + " / " + n;
+} else if (g.skin === "tug") {
+$("gFlag").style.left = (50 - ST.tug * 9) + "%"; $("gWins").textContent = ST.wins ? "🏆 × " + ST.wins : "";
+} else if (g.skin === "boss") {
+var b = BOSSES[ST.boss % BOSSES.length], hp = "", he = "";
 for (var j = 0; j < 5; j++) hp += '<i class="' + (j < ST.hp ? "on" : "") + '"></i>';
-h = '<div class="candy"><div class="fighter"><span class="hero2">🦖</span><b>' + esc(ST.name || "Bạn") + '</b></div><div class="vs">VS</div><div class="fighter"><span class="boss" id="gBoss">' + b[0] + '</span><b>' + b[1] + '</b><span class="hp">' + hp + '</span></div></div>';
-} else if (g.skin === "monster") h = '<div class="mons-bg"><span class="ship" id="gShip">🚀</span></div>';
-else h = '<div class="buildbg"><span>🧱</span><span>🔤</span><span>🏗️</span></div>';
-$("gStage").innerHTML = h;
+for (var m = 0; m < 3; m++) he += m < ST.hearts ? "❤️" : "🤍";
+$("gBoss").textContent = b[0]; $("gBossN").textContent = b[1]; $("gHP").innerHTML = hp; $("gHearts").textContent = he;
+} else if (g.skin === "monster") {
+var ms = "";
+for (var i = 0; i < 5; i++) ms += '<span class="mo' + (i < 5 - ST.alive ? " gone" : "") + '" style="--d:' + (ST.near || 0) + '">' + MONS[(ST.wave * 5 + i) % MONS.length] + "</span>";
+$("gMons").innerHTML = ms;
+} else if (g.skin === "build") {
+var t = ""; for (var k2 = 0; k2 < ST.bricks; k2++) t += '<i style="background:' + ["#ff6b5b", "#ffc93c", "#3ba9ee", "#7bc96f", "#7c5cff"][k2 % 5] + '"></i>';
+$("gTower").innerHTML = t; $("gBrN").textContent = ST.bricks + " 🧱";
+}
+}
+/* hiệu ứng sau mỗi câu: ok = đúng/sai, j = phương án đã chọn */
+function react(ok, j) {
+var g = ST.g, n = ST.qs.length;
+if (g.skin === "path") {
+ST.pos = Math.max(0, Math.min(n, ST.pos + (ok ? 1 : -1))); var hero = $("gHero");
+hero.classList.remove("hop", "trip"); void hero.offsetWidth; hero.classList.add(ok ? "hop" : "trip");
+if (ST.pos - ST.pstart > 5 || ST.pos < ST.pstart) later(drawStage, 450); else drawStage();
+} else if (g.skin === "tug") {
+ST.tug += ok ? 1 : -1; var who = ok ? $("gTA") : $("gTB"); who.classList.remove("pull"); void who.offsetWidth; who.classList.add("pull");
+if (ST.tug >= 5) { ST.wins++; later(function () { ST.tug = 0; drawStage(); }, 900); }
+if (ST.tug <= -5) later(function () { ST.tug = 0; drawStage(); }, 900);
+drawStage();
+} else if (g.skin === "boss") {
+var shot = $("gShot"); shot.className = "shot " + (ok ? "toBoss" : "toHero"); shot.textContent = ok ? "⭐" : "🍬"; void shot.offsetWidth;
+later(function () {
+if (ok) { ST.hp--; $("gBoss").classList.add("hit"); } else { ST.hearts = Math.max(0, ST.hearts - 1); $("gHero2").classList.add("hit"); }
+if (ST.hp <= 0) { $("gBoss").textContent = "💥"; later(function () { ST.boss++; ST.hp = 5; ST.hearts = 3; drawStage(); }, 700); }
+else if (ST.hearts <= 0) later(function () { ST.hearts = 3; drawStage(); }, 700);
+drawStage();
+}, 450);
+} else if (g.skin === "monster") {
+if (ok) {
+var ls = $("gLaser"), alive = document.querySelectorAll("#gMons .mo:not(.gone)"), tgt = alive[0];
+if (tgt) { var r = tgt.getBoundingClientRect(), sr = $("gStage").getBoundingClientRect(); ls.style.left = (r.left - sr.left + r.width / 2) + "px"; ls.className = "laser fire"; tgt.classList.add("boom"); }
+later(function () { ST.alive--; ST.near = 0; if (ST.alive <= 0) { ST.wave++; ST.alive = 5; } ls.className = "laser"; drawStage(); }, 600);
+} else { ST.near = Math.min(3, (ST.near || 0) + 1); drawStage(); Array.prototype.forEach.call(document.querySelectorAll("#gMons .mo:not(.gone)"), function (m) { m.classList.add("laugh"); }); }
+} else if (g.skin === "build") {
+ST.bricks = Math.max(0, ST.bricks + (ok ? 1 : -1)); drawStage();
+var top = $("gTower").lastElementChild; if (ok && top) top.classList.add("drop");
+if (!ok) $("gTower").classList.add("wobble"), later(function () { $("gTower").classList.remove("wobble"); }, 500);
+}
 }
 function show() {
 clearT();
-var q = ST.qs[ST.i], n = ST.qs.length;
-$("gPos").textContent = "Câu " + (ST.i + 1) + " / " + n;
-stage();
+var q = ST.qs[ST.i], n = ST.qs.length, fish = ST.g.skin === "fish" && q.opts;
+$("gPos").textContent = (ST.i + 1) + " / " + n;
 var promptH = "", body = "", lvl = '<span class="glv lv' + q.lv + '">' + LVNAME[q.lv] + '</span>';
-var sayBtn = q.say ? '<button class="gsay" type="button" id="gSay" aria-label="Nghe đọc">🔊</button>' : "";
+var spoken = q.young ? (q.ask || q.say) : q.say;
+var sayBtn = spoken ? '<button class="gsay" type="button" id="gSay" aria-label="Listen">🔊</button>' : "";
 var p = q.p ? pic(q.p, "gpic") : "";
 if (q.k === "w2p" || q.k === "yn") promptH = '<div class="gq big">' + esc(q.q) + "</div>";
 else if (q.k === "first" || q.k === "miss") promptH = '<div class="gq word">' + esc(q.q).replace(/_+/g, function (m) { return '<span class="gap">' + "?".repeat(m.length > 1 ? 2 : 1) + "</span>"; }) + "</div>";
 else promptH = '<div class="gq">' + esc(q.q).replace("____", '<span class="blank">______</span>') + "</div>";
-if (q.k === "yn") promptH = '<div class="gq small">Tranh này là:</div>' + promptH;
+var insH = q.ins && q.ins !== q.q ? '<div class="gins">' + esc(q.ins) + "</div>" : "";
+promptH = insH + promptH;
+if (fish) {
+$("gQ").innerHTML = '<div class="gc-top">' + lvl + sayBtn + "</div>" + (p ? '<div class="gpicbox sm">' + p + "</div>" : "") + promptH + '<div class="gfb" id="gFb" aria-live="polite"></div>';
+var water = $("gWater"); Array.prototype.forEach.call(water.querySelectorAll(".fishopt"), function (f) { f.remove(); });
+var lanes = q.opts.length, F = ["🐟", "🐠", "🐡", "🐟"];
+q.opts.forEach(function (o, j) {
+var b = document.createElement("button"); b.type = "button"; b.className = "fishopt"; b.setAttribute("data-j", j);
+var dur = 9 + ((ST.i * 7 + j * 5) % 6), top = 8 + j * (78 / lanes);
+b.style.top = top + "%"; b.style.animationDuration = dur + "s"; b.style.animationDelay = (-(j * 3.1 + ST.i) % dur) + "s";
+b.innerHTML = '<span class="fbody" style="animation-duration:' + (dur * 2) + "s;animation-delay:" + b.style.animationDelay + '">' + F[j % 4] + '</span><span class="ftag">' + (q.optPic ? pic(o, "op") : esc(o)) + "</span>";
+b.onclick = function () { catchFish(b, j); };
+water.appendChild(b);
+});
+} else {
 if (q.opts) {
-var monster = ST.g.skin === "monster";
-body = '<div class="gopts' + (q.optPic ? " pics" : "") + (q.opts.length === 2 ? " two" : "") + (monster ? " mon" : "") + (ST.g.skin === "fish" && q.optPic ? " float" : "") + '">'
-+ q.opts.map(function (o, j) { return '<button class="gopt" type="button" data-j="' + j + '">' + (monster ? '<span class="mon">' + MONS[(ST.i + j) % MONS.length] + '</span>' : "") + (q.optPic ? pic(o, "op") : '<span class="ot">' + esc(o) + "</span>") + "</button>"; }).join("") + "</div>";
+body = '<div class="gopts' + (q.optPic ? " pics" : "") + (q.opts.length === 2 ? " two" : "") + '">'
++ q.opts.map(function (o, j) { return '<button class="gopt" type="button" data-j="' + j + '">' + (q.optPic ? pic(o, "op") : '<span class="ot">' + esc(o) + "</span>") + "</button>"; }).join("") + "</div>";
 } else if (q.k === "tiles" || q.k === "order") {
-body = '<div class="slots" id="gSlots"></div><div class="tiles' + (q.k === "order" ? " words" : "") + '" id="gTiles">' + q.tiles.map(function (t, j) { return '<button class="tile" type="button" data-j="' + j + '">' + esc(t) + "</button>"; }).join("") + '</div><div class="row gact"><button class="btn ghost small" type="button" id="gClr">Xóa làm lại</button><button class="btn" type="button" id="gChk">Kiểm tra</button></div>';
+body = '<div class="slots" id="gSlots"></div><div class="tiles' + (q.k === "order" ? " words" : "") + '" id="gTiles">' + q.tiles.map(function (t, j) { return '<button class="tile" type="button" data-j="' + j + '">' + esc(t) + "</button>"; }).join("") + '</div><div class="row gact"><button class="btn ghost small" type="button" id="gClr">Clear ↺</button><button class="btn" type="button" id="gChk">Check ✔</button></div>';
 } else if (q.k === "type") {
-body = '<div class="typebox"><input type="text" id="gIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Gõ từ tiếng Anh…"><button class="btn" type="button" id="gChk">Kiểm tra</button></div><p class="ghint">Gợi ý: ' + q.target.length + " chữ cái" + (q.target.indexOf(" ") > 0 ? " (gồm cả dấu cách)" : "") + ", bắt đầu bằng “" + esc(q.target[0]) + "”</p>";
+body = '<div class="typebox"><input type="text" id="gIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here…"><button class="btn" type="button" id="gChk">Check ✔</button></div><p class="ghint">' + esc(q.target[0]) + q.target.slice(1).replace(/\S/g, "_").split("").join(" ").replace(/^/, " ") + "</p>";
 }
 $("gCard").className = "gm-card k" + (1 + ST.i % 6);
 $("gCard").innerHTML = '<div class="gc-top">' + lvl + sayBtn + "</div>" + (p ? '<div class="gpicbox">' + p + "</div>" : "") + promptH + body + '<div class="gfb" id="gFb" aria-live="polite"></div>';
-if ($("gSay")) $("gSay").onclick = function () { say(q.say); };
-if (q.listen || q.k === "w2p" || q.k === "start") later(function () { say(q.say); }, 350);
-if (q.opts) Array.prototype.forEach.call(document.querySelectorAll(".gopt"), function (b) { b.onclick = function () { answer(+b.getAttribute("data-j")); }; });
+}
+if ($("gSay")) $("gSay").onclick = function () { say(spoken); };
+if (q.young || q.listen || q.k === "w2p") later(function () { say(spoken); }, 350);
+if (q.opts && !fish) Array.prototype.forEach.call(document.querySelectorAll(".gopt"), function (b) { b.onclick = function () { answer(+b.getAttribute("data-j")); }; });
 if (q.tiles) {
 var picked = [];
 var draw = function () {
-$("gSlots").innerHTML = picked.length ? picked.map(function (j, k) { return '<button class="tile on" type="button" data-k="' + k + '">' + esc(q.tiles[j]) + "</button>"; }).join(q.k === "order" ? " " : "") + (q.k === "order" ? '<span class="endp">' + esc(q.end) + "</span>" : "") : '<span class="ph">' + (q.k === "order" ? "Bấm các từ theo đúng thứ tự" : "Bấm các chữ cái theo đúng thứ tự") + "</span>";
+$("gSlots").innerHTML = picked.length ? picked.map(function (j, k) { return '<button class="tile on" type="button" data-k="' + k + '">' + esc(q.tiles[j]) + "</button>"; }).join(q.k === "order" ? " " : "") + (q.k === "order" ? '<span class="endp">' + esc(q.end) + "</span>" : "") : '<span class="ph">' + (q.k === "order" ? "Tap the words in order" : "Tap the letters in order") + "</span>";
 Array.prototype.forEach.call(document.querySelectorAll("#gTiles .tile"), function (b) { b.disabled = picked.indexOf(+b.getAttribute("data-j")) >= 0; });
 Array.prototype.forEach.call(document.querySelectorAll("#gSlots .tile"), function (b) { b.onclick = function () { picked.splice(+b.getAttribute("data-k"), 1); draw(); }; });
 };
 Array.prototype.forEach.call(document.querySelectorAll("#gTiles .tile"), function (b) { b.onclick = function () { picked.push(+b.getAttribute("data-j")); draw(); if (picked.length === q.tiles.length) $("gChk").focus(); }; });
 $("gClr").onclick = function () { picked = []; draw(); };
-$("gChk").onclick = function () { if (picked.length < q.tiles.length) { fb("Con xếp hết các ô nhé!", "info"); return; } var got = picked.map(function (j) { return q.tiles[j]; }).join(q.k === "order" ? " " : ""); answer(got === q.target ? 1 : 0, got); };
+$("gChk").onclick = function () { if (picked.length < q.tiles.length) { fb("Use all the tiles!", "info"); return; } var got = picked.map(function (j) { return q.tiles[j]; }).join(q.k === "order" ? " " : ""); answer(got === q.target ? 1 : 0, got); };
 draw();
 }
 if (q.k === "type") {
 var inp = $("gIn"); setTimeout(function () { try { inp.focus(); } catch (e) {} }, 50);
-var chk = function () { var v = inp.value.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.?!]+$/, ""); if (!v) { fb("Con gõ đáp án nhé!", "info"); return; } answer(v === q.target.toLowerCase() ? 1 : 0, v); };
+var chk = function () { var v = inp.value.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.?!]+$/, ""); if (!v) { fb("Type your answer!", "info"); return; } answer(v === q.target.toLowerCase() ? 1 : 0, v); };
 $("gChk").onclick = chk; inp.addEventListener("keydown", function (e) { if (e.key === "Enter") chk(); });
 }
+}
+/* câu cá: thuyền đi tới, thả dây, kéo cá lên rồi chấm */
+function catchFish(b, j) {
+var q = ST.qs[ST.i]; if (q.answered || ST.busy) return; ST.busy = true;
+Array.prototype.forEach.call(document.querySelectorAll(".fishopt"), function (f) { f.disabled = true; });
+var tank = document.querySelector(".tank").getBoundingClientRect(), r = b.getBoundingClientRect();
+b.style.left = (r.left - tank.left) + "px"; b.style.top = (r.top - tank.top) + "px"; b.classList.add("hooked");
+var boat = $("gBoat"), line = $("gLine"), x = r.left - tank.left + r.width / 2;
+boat.style.left = (x - 30) + "px"; line.style.left = x + "px"; line.style.height = "0px";
+later(function () { line.style.height = Math.max(0, r.top - tank.top - 40) + "px"; }, 450);
+later(function () { b.style.top = "30px"; line.style.height = "0px"; }, 950);
+later(function () { ST.busy = false; answer(j); var ok = j === q.ans;
+if (ok) { b.classList.add("toBucket"); ST.fish++; $("gFishN").textContent = ST.fish; var bk = $("gBucket"); bk.classList.remove("bounce"); void bk.offsetWidth; bk.classList.add("bounce"); }
+else { b.classList.add("thrown"); var c = document.querySelector('.fishopt[data-j="' + q.ans + '"]'); if (c) c.classList.add("glow"); }
+}, 1650);
 }
 function fb(t, cls) { var f = $("gFb"); if (f) { f.className = "gfb " + (cls || ""); f.innerHTML = t; } }
 function answer(j, got) {
 var q = ST.qs[ST.i]; if (q.answered) return; q.answered = true;
 var ok = q.opts ? j === q.ans : j === 1, right = q.opts ? q.opts[q.ans] : q.target;
 Array.prototype.forEach.call(document.querySelectorAll(".gopt,.tile,#gChk,#gClr,#gIn"), function (b) { b.disabled = true; });
-if (q.opts) { var bs = document.querySelectorAll(".gopt"); bs[q.ans].classList.add("ok"); if (!ok) bs[j].classList.add("bad"); }
-var card = $("gCard");
+if (q.opts && ST.g.skin !== "fish") { var bs = document.querySelectorAll(".gopt"); bs[q.ans].classList.add("ok"); if (!ok) bs[j].classList.add("bad"); }
+var card = ST.g.skin === "fish" ? $("gQ") : $("gCard");
 if (ok) {
-ST.sc++; ST.streak++; ST.coins += 10 + (ST.streak >= 3 ? 5 : 0); ST.tug++;
+ST.sc++; ST.streak++; ST.coins += 10 + (ST.streak >= 3 ? 5 : 0);
 beep(true); confetti(card); card.classList.add("win");
-var praise = ["Đúng rồi! Giỏi quá!", "Excellent!", "Great job!", "Tuyệt vời!", "Well done!", "Correct!"][ST.i % 6];
-fb("🎉 " + praise + " +" + (10 + (ST.streak >= 3 ? 5 : 0)) + " 🪙" + (ST.streak >= 3 ? " · Chuỗi đúng ×" + ST.streak + " 🔥" : ""), "good");
-if (ST.g.skin === "boss") { ST.hp = Math.max(0, ST.hp - 1); var bo = $("gBoss"); if (bo) bo.classList.add("hit"); }
-if (ST.g.skin === "monster" && q.opts) { var m = document.querySelectorAll(".gopt")[j]; if (m) m.classList.add("zap"); }
-if (ST.g.skin === "fish" && q.opts) { var f = document.querySelectorAll(".gopt")[j]; if (f) f.classList.add("caught"); }
+var praise = ["Great job!", "Excellent!", "Well done!", "Super!", "Correct!", "Amazing!"][ST.i % 6];
+fb("🎉 " + praise + " +" + (10 + (ST.streak >= 3 ? 5 : 0)) + " 🪙" + (ST.streak >= 3 ? " · Streak ×" + ST.streak + " 🔥" : ""), "good");
 } else {
-ST.streak = 0; ST.tug--; beep(false); card.classList.add("shake");
+ST.streak = 0; beep(false); card.classList.add("shake");
 ST.wrong.push({ n: ST.i + 1, q: q.q, right: right, got: q.opts ? q.opts[j] : got });
-fb("Chưa đúng rồi. Đáp án đúng: <b>" + (q.optPic ? pic(right, "inl") : esc(right + (q.end || ""))) + "</b>", "bad");
+fb("Oops! The answer is: <b>" + (q.optPic ? pic(right, "inl") : esc(right + (q.end || ""))) + "</b>", "bad");
 }
-if (q.say && (ok || !q.opts)) later(function () { say(q.say); }, 250);
+react(ok, j);
+if (q.say) later(function () { say(!q.opts || q.optPic || ok ? (q.opts ? q.say : q.target) : q.opts[q.ans]); }, 250);
 $("gSc").textContent = ST.sc; $("gCo").textContent = ST.coins;
-stage();
 var last = ST.i >= ST.qs.length - 1;
-var go = function () {
-if (ST.g.skin === "boss" && (ST.i + 1) % 5 === 0) { ST.boss++; ST.hp = 5; }
-if (last) finish(); else { ST.i++; show(); }
-};
-if (ok) later(go, 1300);
-else { var f2 = $("gFb"); f2.insertAdjacentHTML("beforeend", ' <button class="btn small" type="button" id="gNext">' + (last ? "Xem kết quả" : "Câu tiếp ➜") + "</button>"); $("gNext").onclick = go; $("gNext").focus(); }
+var go = function () { card.classList.remove("win", "shake"); if (last) finish(); else { ST.i++; show(); } };
+if (ok) later(go, window.__FAST ? 15 : 1500);
+else { var f2 = $("gFb"); f2.insertAdjacentHTML("beforeend", ' <button class="btn small" type="button" id="gNext">' + (last ? "Finish 🏁" : "Next ➜") + "</button>"); $("gNext").onclick = go; $("gNext").focus(); }
 }
 function finish() {
 stop(); var tot = ST.qs.length, sc = ST.sc, pct = Math.round(sc / tot * 100), secs = Math.round((Date.now() - ST.start) / 1000);
@@ -206,6 +292,7 @@ HK().run("submitGame", { name: ST.name, cls: ST.cls, folder: x.k, book: x.b.b, u
 .then(function () { $("gSend").className = "c-send ok"; $("gSend").textContent = "✔ Đã gửi kết quả cho cô Hà Kate."; })
 .catch(function () { $("gSend").className = "c-send bad"; $("gSend").textContent = "Chưa gửi được kết quả (mạng chập chờn). Con chụp ảnh giấy khen gửi cô nhé."; });
 }
+/* ---------- gallery ---------- */
 var GAL = null, galWait = null;
 function galLoad() {
 if (GAL) return Promise.resolve(GAL);

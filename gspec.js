@@ -11,7 +11,7 @@ t: câu gõ từ còn thiếu [đáp án] + hình
 */
 var SPEC = {
 "g1|Global Success 1|5": {
-title: "At the fish and chip shop", sound: "I i",
+title: "At the fish and chip shop", sound: "I i", young: true,
 w: [["chicken","thịt gà","🍗"],["chips","khoai tây chiên","🍟"],["fish","cá","🐟"],["milk","sữa","🥛"],["fish and chips","cá và khoai tây chiên","🐟🍟"]],
 r: [["ball","⚽"],["bike","🚲"],["book","📖"],["cake","🍰"],["car","🚗"],["cat","🐱"],["cup","☕"],["apple","🍎"],["bag","👜"],["hat","👒"],["dog","🐶"],["duck","🦆"],["door","🚪"]],
 s: [["I like [chicken].","🍗"],["I like [chips].","🍟"],["I like [fish].","🐟"],["I like [milk].","🥛"],["I like [fish and chips].","🐟🍟"]],
@@ -21,7 +21,7 @@ o: ["I like fish.","I like milk.","I like chips.","I like chicken."],
 t: [["I like [milk].","🥛"],["I like [fish].","🐟"],["I like [chips].","🍟"],["I like [chicken].","🍗"]]
 },
 "g2|Global Success 2|5": {
-title: "In the classroom", sound: "Q q",
+title: "In the classroom", sound: "Q q", young: true,
 w: [["question","câu hỏi","❓"],["square","hình vuông","🟦"],["quiz","bài kiểm tra nhanh","📝"]],
 r: [["pizza","🍕"],["popcorn","🍿"],["pasta","🍝"],["kite","🪁"],["bike","🚲"],["kitten","🐱"],["sea","🌊"],["sand","🏖️"],["sail","⛵"],["rainbow","🌈"],["river","🏞️"],["road","🛣️"]],
 s: [["She's drawing a [square].","👧✏️🟦"],["He's doing a [quiz].","👦📝"],["She's asking a [question].","👧❓"],["He's drawing a [square].","👦✏️🟦"],["She's doing a [quiz].","👧📝"],["He's asking a [question].","👦❓"]],
@@ -72,7 +72,7 @@ o: ["I'd like to be a firefighter.","What would you like to be in the future?","
 t: [["I'd like to be a [writer].","✍️📖"],["I'd like to be a [gardener].","🧑‍🌾"],["I'd like to [grow flowers].","🌱🌷"],["I'd like to be a [teacher].","🧑‍🏫"],["Because I'd like to [write stories].","📝"]]
 },
 "kinder|Oxford Phonics World 1|2": {
-title: "Dd Ee Ff", sound: "d, e, f", kinder: true,
+title: "Dd Ee Ff", sound: "d, e, f", kinder: true, young: true,
 w: [["desk","bàn học","svg:desk","d"],["dog","con chó","🐶","d"],["doll","búp bê","🪆","d"],["duck","con vịt","🦆","d"],
 ["egg","quả trứng","🥚","e"],["elbow","khuỷu tay","svg:elbow","e"],["elephant","con voi","🐘","e"],["envelope","phong bì","✉️","e"],
 ["fan","cái quạt","🪭","f"],["farm","trang trại","🐄🌾🏡","f","nostart"],["fish","con cá","🐟","f"],["fork","cái dĩa","svg:fork","f"]],
@@ -80,6 +80,7 @@ r: [["apple","🍎"],["ant","🐜"],["bear","🐻"],["banana","🍌"],["bird","�
 s: [], g: [], q: [], o: [], t: []
 }
 };
+/* ---------- danh sách game mỗi unit ---------- */
 var SKINS = {
 fish:   { name: "Câu cá chọn tranh", ic: "🎣" },
 monster:{ name: "Bắn quái vật", ic: "👾" },
@@ -106,6 +107,7 @@ return [
 { n: 5, skin: "boss",    name: "Đấu trùm Vương quốc kẹo", plan: [[8, 1], [10, 2], [10, 3], [12, 4], [10, 5]] }
 ];
 }
+/* ---------- tiện ích ---------- */
 function rng(seed) { var a = 0; for (var i = 0; i < seed.length; i++) a = (Math.imul(a ^ seed.charCodeAt(i), 2654435761) >>> 0); a = a || 1;
 return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function shuffle(a, R) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(R() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -114,6 +116,7 @@ function uniq(a) { var s = {}, o = []; a.forEach(function (x) { var k = typeof x
 function blank(t) { return t.replace(/\[([^\]]+)\]/, "____"); }
 function fill(t) { return t.replace(/\[([^\]|]+)(\|[^\]]*)?\]/, "$1"); }
 function inside(t) { var m = t.match(/\[([^\]]+)\]/); return m ? m[1] : ""; }
+/* 4 phương án: đúng + nhiễu, xáo trộn */
 function choice(R, correct, wrongs, key) {
 wrongs = uniq(wrongs.filter(function (w) { return (key ? key(w) : w) !== (key ? key(correct) : correct); }));
 var opts = shuffle([correct].concat(pick(wrongs, 3, R)), R);
@@ -130,7 +133,10 @@ for (i = 1; i < w.length; i++) if (w[i] !== " " && VOW.indexOf(w[i]) < 0) out.pu
 return uniq(out).filter(function (x) { return x !== w && !BADW.test(x); });
 }
 var CONS = "bcdfghklmnprstvwz".split("");
-var REAL = {};
+/* ---------- sinh câu hỏi theo cấp độ ----------
+Mỗi câu: {k:kiểu, lv, p:hình gợi ý, q:câu hỏi (chữ), say:đọc, opts:[...], ans, optPic:true nếu phương án là hình,
+tiles:[...], target:"...", accept:[...]} */
+var REAL = {}; /* từ tiếng Anh có thật – không dùng làm phương án sai */
 ("chaps chops chap chop fist fig fin fish dish wish mill mile milk silk chick check chin chip ship shop sip lip hip " +
 "dig dug dog dot log fog hog bog jog cog doll dull dell duck deck dock luck buck tuck suck desk disk dusk egg ego " +
 "fan fun fin fen farm firm form fork pork cork fish quiz quit squire sware swear swore scare share spare cook cock " +
@@ -144,6 +150,7 @@ var S = SPEC[key], R = rng(key + "|pool|" + (letters || "")), P = { 1: [], 2: []
 var grp = function (w) { return (S.grp && S.grp[w]) || "a"; };
 var W = S.w.filter(function (w) { return !letters || letters.indexOf(w[3]) >= 0; });
 var picOf = {}; S.w.forEach(function (w) { picOf[w[0]] = w[2]; }); S.r.forEach(function (r) { picOf[r[0]] = r[1]; });
+/* phương án nhiễu: từ cùng nhóm trong unit + từ ôn tập; bỏ từ chứa nhau (fish / fish and chips) */
 var clash = function (a, b) { return a === b || a.indexOf(b) >= 0 || b.indexOf(a) >= 0; };
 var wordsFor = function (word) { return S.w.filter(function (x) { return grp(x[0]) === grp(word); }).map(function (x) { return x[0]; }).concat(S.r.map(function (r) { return r[0]; }))
 .filter(function (x) { return !clash(x, word) && !clash(picOf[x], picOf[word]); }); };
@@ -153,26 +160,27 @@ var vowels = "aeiou".split("");
 W.forEach(function (w) {
 var word = w[0], pic = w[2], c;
 c = choice(R, word, wordsFor(word));
-P[1].push({ k: "p2w", lv: 1, p: pic, q: "Đây là gì?", say: "", opts: c.opts, ans: c.ans, word: word });
+if (!S.kinder) P[1].push({ k: "p2w", lv: 1, p: pic, q: "What is it?", say: "", opts: c.opts, ans: c.ans, word: word });
 c = choice(R, pic, picsFor(word));
 P[1].push({ k: "w2p", lv: 1, p: "", q: word, say: word, opts: c.opts, ans: c.ans, optPic: true, word: word });
 c = choice(R, pic, picsFor(word));
-P[1].push({ k: "l2p", lv: 1, p: "", q: "Nghe và chọn tranh đúng", say: word, opts: c.opts, ans: c.ans, optPic: true, word: word, listen: true });
+P[1].push({ k: "l2p", lv: 1, p: "", q: "Listen and choose.", say: word, opts: c.opts, ans: c.ans, optPic: true, word: word, listen: true });
 var other = pick(wordsFor(word), 1, R)[0];
-P[1].push({ k: "yn", lv: 1, p: pic, q: word, say: word, opts: ["Đúng ✔", "Sai ✘"], ans: 0, word: word });
-P[1].push({ k: "yn", lv: 1, p: picOf[other], q: word, say: word, opts: ["Đúng ✔", "Sai ✘"], ans: 1, word: word });
+P[1].push({ k: "yn", lv: 1, p: pic, q: word, say: word, opts: ["Yes ✔", "No ✘"], ans: 0, word: word });
+P[1].push({ k: "yn", lv: 1, p: picOf[other], q: word, say: word, opts: ["Yes ✔", "No ✘"], ans: 1, word: word });
 c = choice(R, word, wordsFor(word));
-P[2].push({ k: "l2w", lv: 2, p: "", q: "Nghe và chọn từ đúng", say: word, opts: c.opts, ans: c.ans, word: word, listen: true });
-if (!S.kinder) {
+P[2].push({ k: "l2w", lv: 2, p: "", q: "Listen and choose.", say: word, opts: c.opts, ans: c.ans, word: word, listen: true });
+if (!S.young) {
 var ms = S.w.filter(function (x) { return x[0] !== word && grp(x[0]) === grp(word) && !clash(x[1], w[1]); }).map(function (x) { return x[1]; });
-if (ms.length >= 2) { c = choice(R, w[1], ms); P[2].push({ k: "mean", lv: 2, p: "", q: "“" + word + "” nghĩa là gì?", say: word, opts: c.opts, ans: c.ans, word: word }); }
+if (ms.length >= 2) { c = choice(R, w[1], ms); P[2].push({ k: "mean", lv: 2, p: "", q: "What does “" + word + "” mean?", say: word, opts: c.opts, ans: c.ans, word: word }); }
 c = choice(R, word, wordsFor(word));
-P[2].push({ k: "vm", lv: 2, p: "", q: "Từ tiếng Anh nào nghĩa là “" + w[1] + "”?", say: "", opts: c.opts, ans: c.ans, word: word });
+P[2].push({ k: "vm", lv: 2, p: "", q: "Which word means “" + w[1] + "”?", say: "", opts: c.opts, ans: c.ans, word: word });
 }
 if (W.length < 5) pick(wordsFor(word).filter(function (x) { return x !== other; }), 2, R).forEach(function (o2) {
-P[1].push({ k: "yn", lv: 1, p: picOf[o2], q: word, say: word, opts: ["Đúng ✔", "Sai ✘"], ans: 1, word: word });
+P[1].push({ k: "yn", lv: 1, p: picOf[o2], q: word, say: word, opts: ["Yes ✔", "No ✘"], ans: 1, word: word });
 });
 });
+/* chữ cái đầu còn thiếu: phương án sai luôn tạo ra "từ" không có thật */
 single.forEach(function (w) {
 var word = w[0], first = word[0], isV = vowels.indexOf(first) >= 0;
 var pool = (isV ? CONS : vowels).filter(function (x) { return x !== first && !REAL[x + word.slice(1)]; });
@@ -182,34 +190,37 @@ P[2].push({ k: "first", lv: 2, p: w[2], q: "_" + word.slice(1), say: word, opts:
 if (S.kinder) {
 W.forEach(function (w) {
 var first = w[3], opts = shuffle([first].concat(pick(CONS.filter(function (x) { return x !== first; }), 3, R)), R);
-P[1].push({ k: "letter", lv: 1, p: w[2], q: "Từ này bắt đầu bằng chữ nào?", say: w[0], opts: opts, ans: opts.indexOf(first), word: w[0] });
+P[1].push({ k: "letter", lv: 1, p: w[2], q: "First letter?", say: w[0], opts: opts, ans: opts.indexOf(first), word: w[0] });
 if (w[4] === "nostart") return;
 var nonPics = S.r.map(function (r) { return r[1]; }).concat(S.w.filter(function (x) { return x[3] !== w[3]; }).map(function (x) { return x[2]; }));
 var c = choice(R, w[2], nonPics);
-P[1].push({ k: "start", lv: 1, p: "", q: "Tranh nào bắt đầu bằng chữ " + w[3].toUpperCase() + " " + w[3] + "?", say: w[0], opts: c.opts, ans: c.ans, optPic: true, word: w[0] });
+P[1].push({ k: "start", lv: 1, p: "", q: w[3].toUpperCase() + " " + w[3], say: w[0], opts: c.opts, ans: c.ans, optPic: true, word: w[0] });
 });
 if (letters && letters.length > 1) W.forEach(function (w) {
 var ls = letters.split("");
-P[2].push({ k: "sort", lv: 2, p: w[2], q: "“" + w[0] + "” bắt đầu bằng chữ nào?", say: w[0], opts: ls.map(function (l) { return l.toUpperCase() + " " + l; }), ans: ls.indexOf(w[3]), word: w[0] });
+P[2].push({ k: "sort", lv: 2, p: w[2], q: w[0], say: w[0], opts: ls.map(function (l) { return l.toUpperCase() + " " + l; }), ans: ls.indexOf(w[3]), word: w[0] });
 });
 (letters || "").split("").forEach(function (l) {
 var wr = pick("bcdfghjklmnpqrstuvwxyz".split("").filter(function (x) { return x !== l; }), 3, R);
 var o1 = shuffle([l].concat(wr), R), o2 = shuffle([l.toUpperCase()].concat(wr.map(function (x) { return x.toUpperCase(); })), R);
-P[2].push({ k: "case", lv: 2, p: "", q: "Chữ thường của " + l.toUpperCase() + " là chữ nào?", say: l, opts: o1, ans: o1.indexOf(l), word: "case-" + l + "1" });
-P[2].push({ k: "case", lv: 2, p: "", q: "Chữ hoa của " + l + " là chữ nào?", say: l, opts: o2, ans: o2.indexOf(l.toUpperCase()), word: "case-" + l + "2" });
+P[2].push({ k: "case", lv: 2, p: "", q: l.toUpperCase() + " → ?", say: l, opts: o1, ans: o1.indexOf(l), word: "case-" + l + "1" });
+P[2].push({ k: "case", lv: 2, p: "", q: l + " → ?", say: l, opts: o2, ans: o2.indexOf(l.toUpperCase()), word: "case-" + l + "2" });
 });
 }
+/* chọn từ viết đúng (phương án sai không phải từ có thật) */
 single.forEach(function (w) {
 var word = w[0], bad = misspell(word, R).filter(function (x) { return !REAL[x] && !picOf[x]; });
 if (bad.length < 3) return;
 var c = choice(R, word, bad), lv = S.kinder ? 2 : 3;
-P[lv].push({ k: "spell", lv: lv, p: w[2], q: "Từ nào viết đúng?", say: word, opts: c.opts, ans: c.ans, word: word });
+P[lv].push({ k: "spell", lv: lv, p: w[2], q: "Which is right?", say: word, opts: c.opts, ans: c.ans, word: word });
 });
+/* điền từ vào câu (có tranh gợi ý, phương án cùng nhóm) */
 S.s.forEach(function (s) {
 var ans = inside(s[0]), same = S.w.filter(function (x) { return grp(x[0]) === grp(ans) && !clash(x[0], ans); }).map(function (x) { return x[0]; });
 var c = choice(R, ans, same);
 P[3].push({ k: "sfill", lv: 3, p: s[1], q: blank(s[0]), say: fill(s[0]), opts: c.opts, ans: c.ans, word: ans });
 });
+/* thiếu hai chữ cái liền nhau */
 single.filter(function (w) { return w[0].length >= 5; }).forEach(function (w) {
 var word = w[0], i = 1 + Math.floor(R() * (word.length - 3)), part = word.substr(i, 2);
 var wrong = ["ae", "oi", "ue", "ia", "ou", "ea", "rl", "ln", "rt", "sk", "mp", "ng"].filter(function (x) { return x !== part && !REAL[word.slice(0, i) + x + word.slice(i + 2)]; });
@@ -227,20 +238,43 @@ P[4].push({ k: "qa", lv: 4, p: q.p, q: q.q, say: q.q, opts: opts, ans: opts.inde
 single.filter(function (w) { return w[0].length <= 9; }).forEach(function (w) {
 var t, n = 0; do { t = shuffle(w[0].split(""), R); } while ((t.join("") === w[0] || BADW.test(t.join(""))) && ++n < 30);
 var lv = S.kinder ? 2 : 4;
-P[lv].push({ k: "tiles", lv: lv, p: w[2], q: "Xếp chữ cái thành từ", say: w[0], tiles: t, target: w[0], word: w[0] });
+P[lv].push({ k: "tiles", lv: lv, p: w[2], q: "Make the word.", say: w[0], tiles: t, target: w[0], word: w[0] });
 });
 S.o.forEach(function (o) {
 var end = o.slice(-1), toks = o.slice(0, -1).split(" "), t, n = 0;
 do { t = shuffle(toks, R); } while (t.join(" ") === toks.join(" ") && ++n < 20);
-P[5].push({ k: "order", lv: 5, p: "", q: "Xếp các từ thành câu đúng", say: o, tiles: t, target: toks.join(" "), end: end, word: o });
+P[5].push({ k: "order", lv: 5, p: "", q: "Put the words in order.", say: o, tiles: t, target: toks.join(" "), end: end, word: o });
 });
 S.t.forEach(function (t) {
 var ans = inside(t[0]);
 P[5].push({ k: "type", lv: 5, p: t[1], q: blank(t[0]), say: fill(t[0]), target: ans, word: "type-" + t[0] });
 });
-if (!S.kinder) single.forEach(function (w) { P[5].push({ k: "type", lv: 5, p: w[2], q: "Viết từ tiếng Anh cho tranh này", say: w[0], target: w[0], word: "typew-" + w[0] }); });
+/* gõ từ theo tranh (khó nhất cho khối lớn) */
+if (!S.kinder) single.forEach(function (w) { P[5].push({ k: "type", lv: 5, p: w[2], q: "Write the word.", say: w[0], target: w[0], word: "typew-" + w[0] }); });
+/* lệnh ngắn (hiện chữ) + câu đọc to (khối nhỏ tự đọc) */
+var INS = { p2w: ["What is it?", "What is it?"], w2p: ["Find it!", "Choose the picture."], l2p: ["Listen. Find it!", "Listen and choose the picture."],
+yn: ["Yes or no?", "Yes or no?"], l2w: ["Listen. Choose!", "Listen and choose the word."], mean: ["", "Choose the meaning."], vm: ["", "Choose the English word."],
+first: ["Which letter?", "Which letter is missing?"], letter: ["First letter?", "What is the first letter?"], start: ["Find it!", "Which picture starts with this letter?"],
+sort: ["Which letter?", "Which letter does it start with?"], "case": ["Find it!", "Find the letter."], spell: ["Which is right?", "Which word is spelt correctly?"],
+sfill: ["Choose!", "Complete the sentence."], miss: ["Which letters?", "Which letters are missing?"], gram: ["Choose!", "Choose the correct word."],
+qa: ["Choose!", "Choose the best answer."], tiles: ["Make the word!", "Put the letters in order."], order: ["Make the sentence!", "Put the words in order."], type: ["Write it!", "Write the missing word."] };
+[1, 2, 3, 4, 5].forEach(function (lv) { P[lv].forEach(function (q) {
+var ins = INS[q.k] || ["", ""]; q.ins = S.young ? ins[0] : ins[1]; q.young = !!S.young;
+var w = q.say || "";
+if (q.k === "p2w") q.ask = "What is it?";
+else if (q.k === "yn") q.ask = w + ". Yes or no?";
+else if (q.k === "first" || q.k === "letter") q.ask = w + ". Which letter?";
+else if (q.k === "start") q.ask = "Which one starts with " + q.q.split(" ")[0] + "?";
+else if (q.k === "sort") q.ask = w + ". Which letter?";
+else if (q.k === "case") q.ask = /1$/.test(q.word) ? "Find small " + q.say + "." : "Find big " + q.say.toUpperCase() + ".";
+else if (q.k === "tiles") q.ask = "Make the word: " + w + ".";
+else if (q.k === "order") q.ask = "Make the sentence.";
+else q.ask = w;
+if (["What is it?", "Listen and choose.", "First letter?", "Make the word.", "Which is right?", "Put the words in order.", "Write the word."].indexOf(q.q) >= 0 && q.ins) q.q = q.ins;
+}); });
 return P;
 }
+/* plan: [[số câu, cấp độ], ...] – dễ trước, khó sau; hạn chế lặp lại cùng một từ liền nhau */
 function build(key, game) {
 var P = pools(key, game.letters), out = [];
 game.plan.forEach(function (pl) {
