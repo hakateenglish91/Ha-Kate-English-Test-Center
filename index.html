@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23ffc93c'/%3E%3Ctext x='32' y='42' font-family='Arial' font-weight='700' font-size='26' text-anchor='middle' fill='%232b2d42'%3EHK%3C/text%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Nunito:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@600;700;800&family=Nunito:ital,wght@0,500;0,600;0,700;0,800;1,600&display=swap">
 <style>
 :root{
   --bg:#fffaf0; --sheet:#ffffff; --ink:#2b2d42; --muted:#5d6077; --line:#ece4d2;
@@ -230,6 +230,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
 .fc-mini b{font-family:var(--font-display);font-size:1.05rem;overflow-wrap:anywhere}
 .fc-mini small{color:var(--muted);font-weight:700;font-size:.8rem}
 </style>
+<link rel="stylesheet" href="games.css?v=1">
 </head>
 <body>
 <div class="strip"><div class="wrap">
@@ -249,6 +250,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
 <main class="wrap">
 <div class="loading" id="loading"><span class="spin"></span>Đang tải bài kiểm tra…</div>
 <section id="vHome" hidden>
+  <div id="galStrip"></div>
   <div class="hello"><div><h1>Chào các con và quý phụ huynh!</h1>
     <p>Chọn khối lớp của con, bấm vào bài, điền họ tên rồi bắt đầu làm. Nộp bài xong con xem điểm và đáp án đúng ngay, điểm được gửi thẳng tới cô.</p></div></div>
   <a class="procard" href="#" data-go="profile" target="_self">
@@ -265,6 +267,16 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
   <div class="fbooks" id="fBooks"></div>
   <div class="sec-h" id="fTestsH" hidden><h2>Bài kiểm tra</h2></div>
   <div class="tlist" id="fList"></div>
+</section>
+<section id="vGames" hidden>
+  <div class="crumbs"><a href="#" data-go="home" target="_self">Bài kiểm tra</a> / <a id="gmCrumbF" href="#" target="_self"></a> / <a id="gmCrumbU" href="#" target="_self"></a> / Game</div>
+  <div id="gmBox"></div>
+</section>
+<section id="vPlay" hidden><div id="playBox"></div></section>
+<section id="vGallery" hidden>
+  <div class="crumbs"><a href="#" data-go="home" target="_self">Trang chủ</a> / Gallery</div>
+  <div class="hello"><div><h1>📸 Gallery lớp học</h1><p>Ảnh và video các lớp học của CLB Tiếng Anh Cô Hà Kate.</p></div></div>
+  <div id="galBox"></div>
 </section>
 <section id="vUnit" hidden>
   <div class="crumbs"><a href="#" data-go="home" target="_self">Bài kiểm tra</a> / <a id="uCrumbF" href="#" target="_self"></a> / <span id="uCrumb"></span></div>
@@ -335,17 +347,21 @@ var API="https://script.google.com/macros/s/AKfycbxJjFlJVuFWiB4zoaYV4FFtVdAkvt3P
 function run(fn,arg){
   var url=API, opt={method:"GET",credentials:"omit",redirect:"follow",cache:"no-store"};
   if(fn==="submitTest"){opt={method:"POST",credentials:"omit",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({api:"submit",data:arg})}}
-  else url+="?api="+(fn==="getData"?"data":fn==="getCards"?"cards&f="+encodeURIComponent(arg):"photos")+"&t="+Date.now();
+  else if(fn==="submitGame"){opt={method:"POST",credentials:"omit",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({api:"game",data:arg})}}
+  else url+="?api="+(fn==="getData"?"data":fn==="getCards"?"cards&f="+encodeURIComponent(arg):fn==="getGallery"?"gallery":"photos")+"&t="+Date.now();
   return fetch(url,opt).then(function(r){if(!r.ok)throw new Error("Lỗi mạng "+r.status);return r.json()}).then(function(j){if(!j||!j.ok)throw new Error((j&&j.e)||"Lỗi máy chủ");return j.r});
 }
 var skipHash=false;
 function parseHash(){var h=location.hash.replace(/^#\/?/,""),i=h.indexOf("/");if(!h)return {v:"home",a:""};return i<0?{v:h,a:""}:{v:h.slice(0,i),a:decodeURIComponent(h.slice(i+1))}}
-var VIEWS=["vHome","vFolder","vUnit","vCards","vExam","vProfile"];
-function show(v){VIEWS.forEach(function(x){$(x).hidden=x!==v});$("navHome").setAttribute("aria-current",v!=="vProfile"?"page":"false");$("navProfile").setAttribute("aria-current",v==="vProfile"?"page":"false")}
+var VIEWS=["vHome","vFolder","vUnit","vCards","vGames","vPlay","vGallery","vExam","vProfile"];
+function show(v){document.body.classList.toggle("kid",["vFolder","vUnit","vCards","vGames","vPlay"].indexOf(v)>=0);VIEWS.forEach(function(x){$(x).hidden=x!==v});$("navHome").setAttribute("aria-current",v!=="vProfile"?"page":"false");$("navProfile").setAttribute("aria-current",v==="vProfile"?"page":"false")}
 function go(view,arg,noPush){
-  $("examBar").hidden=true; stopClock(); fcStop();
+  $("examBar").hidden=true; stopClock(); fcStop(); try{window.HKG&&HKG.stop()}catch(e){}
   if(!noPush){var nh=view==="home"?"":"#"+view+(arg?"/"+encodeURIComponent(arg):"");if(location.hash!==nh&&!(nh===""&&!location.hash)){skipHash=true;if(nh)location.hash=nh;else history.pushState(null,"",location.pathname+location.search)}}
   if(view==="test"){var t=findTest(arg);if(t){show("vExam");openExam(t);window.scrollTo(0,0);return}}
+  if(view==="games"&&window.HKG){var gx=unitOf(arg);if(gx){show("vGames");$("gmCrumbF").textContent=gx.f.n;$("gmCrumbF").setAttribute("data-go","folder");$("gmCrumbF").setAttribute("data-arg",gx.k);$("gmCrumbU").textContent="Unit "+gx.u.n;$("gmCrumbU").setAttribute("data-go","unit");$("gmCrumbU").setAttribute("data-arg",arg);HKG.renderList($("gmBox"),gx,arg);window.scrollTo(0,0);return}}
+  if(view==="play"&&window.HKG){var pp=String(arg||"").split("~"),pn=+pp.pop(),pa=pp.join("~"),px=unitOf(pa);if(px){show("vPlay");HKG.play($("playBox"),px,pa,pn);window.scrollTo(0,0);return}}
+  if(view==="gallery"&&window.HKG){show("vGallery");HKG.galView($("galBox"));window.scrollTo(0,0);return}
   if(view==="unit"){show("vUnit");renderUnit(arg);window.scrollTo(0,0);return}
   if(view==="cards"){show("vCards");openCards(arg);window.scrollTo(0,0);return}
   if(view==="folder"){show("vFolder");renderFolder(arg);window.scrollTo(0,0);return}
@@ -354,7 +370,7 @@ function go(view,arg,noPush){
 }
 window.addEventListener("hashchange",function(){if(skipHash){skipHash=false;return}var s=parseHash();go(s.v,s.a,true)});window.addEventListener("popstate",function(){if(!location.hash){go("home",null,true)}});
 document.addEventListener("click",function(e){var a=e.target.closest("[data-go]");if(!a)return;e.preventDefault();go(a.getAttribute("data-go"),a.getAttribute("data-arg"))});
-function renderHome(){
+function renderHome(){try{window.HKG&&HKG.galStrip($("galStrip"))}catch(e){}
   $("totalCount").textContent=TESTS.length+" bài";
   $("folderGrid").innerHTML=FOLDERS.map(function(f){var n=TESTS.filter(function(t){return t.folder===f.k}).length;
     return '<a class="folder k'+f.c+'" data-go="folder" data-arg="'+f.k+'" target="_self" href="#"><span class="dot"></span><span class="fn">'+esc(f.n)+'</span><span class="fe">'+esc(f.e)+'</span><span class="fc">'+(function(){var u=(CIDX[f.k]||[]).reduce(function(s,b){return s+b.u.length},0),a=[];if(u)a.push(u+" unit");if(n)a.push(n+" bài");return a.length?a.join(" · "):"Chưa có bài"})()+'</span></a>'}).join("");
@@ -369,7 +385,7 @@ function renderFolder(k){
   renderBooks(k,f,books,list.length);
 }
 function renderBooks(k,f,books,nt){
-  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">Unit '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+'</span></a>'}).join("")+'</div></div>'}).join("");
+  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">Unit '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+'</span></a>'}).join("")+'</div></div>'}).join("");
   $("fBooks").hidden=!books.length; $("fTestsH").hidden=!(books.length&&nt);
 }
 function unitOf(arg){var p=String(arg||"").split("~"),k=p[0],b=(CIDX[k]||[])[+p[1]],u=b&&b.u[+p[2]];return u?{k:k,f:folderOf(k),b:b,u:u,arg:arg}:null}
@@ -381,7 +397,7 @@ function renderUnit(arg){
   $("uHead").innerHTML='<span class="tag">'+esc(x.b.b)+'</span><h1>Unit '+esc(x.u.n)+(x.u.t?': '+esc(x.u.t):'')+'</h1>'+(x.u.s?'<span class="note">Âm / chữ trọng tâm: <b>'+esc(x.u.s)+'</b></span>':'');
   $("uActs").innerHTML='<a class="uact k2" data-go="cards" data-arg="'+esc(arg)+'" target="_self" href="#"><span class="ic">🃏</span><b>Thẻ từ</b><span>'+x.u.c+' từ vựng, có hình và giọng đọc mẫu</span><span class="btn small go">Học thẻ từ</span></a>'
    +'<div class="uact k1"><span class="ic">📝</span><b>Bài test</b><span>Bài kiểm tra theo unit</span><span class="soon">Sắp có</span></div>'
-   +'<div class="uact k3"><span class="ic">🎮</span><b>Game</b><span>Trò chơi ôn từ vựng</span><span class="soon">Sắp có</span></div>';
+   +(window.HKG&&HKG.hasGames(x)?'<a class="uact k3" data-go="games" data-arg="'+esc(arg)+'" target="_self" href="#"><span class="ic">🎮</span><b>Game</b><span>'+HKG.count(x)+' game ôn từ vựng và mẫu câu, từ dễ đến khó</span><span class="btn small go">Chơi game</span></a>':'<div class="uact k3"><span class="ic">🎮</span><b>Game</b><span>Trò chơi ôn từ vựng</span><span class="soon">Sắp có</span></div>');
 }
 var fcTimer=null, VOICE=null;
 function fcStop(){if(fcTimer){clearTimeout(fcTimer);fcTimer=null}try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
@@ -532,11 +548,14 @@ function renderProfile(){
   +'<div class="quote">“Mong mỗi học sinh luôn tự tin, chủ động và yêu thích tiếng Anh.”<div style="font-size:.9rem;margin-top:6px">— Ms. Hà Kate</div></div>';
   if(!photosLoaded){photosLoaded=true;run("getPhotos").then(function(p){GALLERY=p||[];if(!$("vProfile").hidden)renderProfile()}).catch(function(){})}
 }
+window.HK={run:run,say:say,go:go,folderOf:folderOf,esc:esc};
 run("getData").then(function(d){
   TESTS=d.tests||[]; CIDX=d.cards||{}; if(d.portrait){PH.portrait=d.portrait;$("logoPh").innerHTML=pimg("portrait","Ms. Hà Kate");$("helloPh").innerHTML=pimg("portrait","Ms. Hà Kate")}
   $("loading").hidden=true; var s0=parseHash(); go(s0.v,s0.a,true);
 }).catch(function(){ $("loading").innerHTML='<div class="errmsg">Chưa tải được bài kiểm tra. Con tải lại trang nhé.</div>' });
 })();
 </script>
+<script src="gspec.js?v=1"></script>
+<script src="gui.js?v=1"></script>
 </body>
 </html>
