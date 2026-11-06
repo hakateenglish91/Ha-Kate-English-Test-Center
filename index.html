@@ -126,6 +126,8 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .stem{display:flex;gap:10px;margin:0 0 10px;padding:0;float:left;width:100%}
 .qn{font-family:var(--font-display);font-weight:800;min-width:2.3em;font-variant-numeric:tabular-nums;color:var(--accent)}
 .stem p{margin:0;min-width:0}
+.say{margin-left:8px;border:1.5px solid var(--accent);background:var(--sheet);color:var(--accent);border-radius:999px;padding:3px 12px;font:inherit;font-weight:800;cursor:pointer;vertical-align:middle}
+.say:hover{background:var(--accent);color:var(--accent-ink)}
 .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;clear:both}
 .opts.long{grid-template-columns:1fr}
 @media (max-width:520px){.opts{grid-template-columns:1fr}}
@@ -487,8 +489,8 @@ function buildQuiz(){
   partsOf(T).forEach(function(p){
     h+='<section class="part"><div class="part-head"><span class="eyebrow">Part '+p.n+' · Câu '+p.from+'–'+p.to+'</span><h2>'+esc(p.t)+'</h2></div>';
     for(var i=p.from-1;i<p.to&&i<T.q.length;i++){
-      var stem=T.q[i][0], opts=T.q[i][1], long=opts.some(function(o){return String(o).length>22});
-      h+='<fieldset class="q" id="q'+(i+1)+'"><legend class="stem"><span class="qn">'+(i+1)+'.</span><p>'+esc(stem)+'</p></legend><div class="opts'+(long?" long":"")+'">';
+      var stem=T.q[i][0], say=null, sm=/\{\{say:([^}]*)\}\}/.exec(stem); if(sm){say=sm[1].trim();stem=stem.replace(sm[0],'').trim()} var opts=T.q[i][1], long=opts.some(function(o){return String(o).length>22});
+      h+='<fieldset class="q" id="q'+(i+1)+'"><legend class="stem"><span class="qn">'+(i+1)+'.</span><p>'+esc(stem)+(say?' <button type="button" class="say" data-say="'+esc(say)+'">🔊 Nghe</button>':'')+'</p></legend><div class="opts'+(long?" long":"")+'">';
       opts.forEach(function(o,j){h+='<label class="opt" id="o'+i+'_'+j+'"><input type="radio" name="a'+i+'" id="r'+i+'_'+j+'" value="'+j+'"><span class="l">'+L[j]+'</span><span class="t">'+esc(o)+'</span></label>'});
       h+='</div></fieldset>';
     }
@@ -496,6 +498,7 @@ function buildQuiz(){
   });
   form.innerHTML=h; form.classList.remove("done");
 }
+if(!window.__sayBound){window.__sayBound=1;document.addEventListener('click',function(ev){var bt=ev.target.closest&&ev.target.closest('.say');if(!bt)return;ev.preventDefault();try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(bt.getAttribute('data-say'));u.lang='en-US';u.rate=0.85;var vs=speechSynthesis.getVoices().filter(function(v){return /^en(-|_)(US|GB)/i.test(v.lang)});if(vs.length)u.voice=vs[0];speechSynthesis.speak(u)}catch(er){}})}
 function updateProgress(){var n=answers.filter(function(a){return a!==null}).length;$("barFill").style.width=(n/(answers.length||1)*100)+"%";$("progText").textContent=n+" / "+answers.length}
 function startClock(){stopClock();var tick=function(){if(!T)return;var left=T.minutes*60-Math.floor((Date.now()-startedAt)/1000),a=Math.abs(left);$("clock").textContent=(left<0?"+":"")+Math.floor(a/60)+":"+String(a%60).padStart(2,"0");$("clock").classList.toggle("late",left<0)};tick();clockTimer=setInterval(tick,1000)}
 function stopClock(){if(clockTimer){clearInterval(clockTimer);clockTimer=null}$("clock").textContent=""}
