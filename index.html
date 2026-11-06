@@ -378,8 +378,10 @@ function renderHome(){try{window.HKG&&HKG.galStrip($("galStrip"))}catch(e){}
   $("folderGrid").innerHTML=FOLDERS.map(function(f){var n=TESTS.filter(function(t){return t.folder===f.k}).length;
     return '<a class="folder k'+f.c+'" data-go="folder" data-arg="'+f.k+'" target="_self" href="#"><span class="dot"></span><span class="fn">'+esc(f.n)+'</span><span class="fe">'+esc(f.e)+'</span><span class="fc">'+(function(){var u=(CIDX[f.k]||[]).reduce(function(s,b){return s+b.u.length},0),a=[];if(u)a.push(u+" unit");if(n)a.push(n+" bài");return a.length?a.join(" · "):"Chưa có bài"})()+'</span></a>'}).join("");
 }
+function unitNo(t){var m=String(t.id||'').match(/-u(\d+)(?:-|$)/)||String(t.title||'').match(/Unit\s*(\d+)/i);return m?m[1]:''}
+function inBookUnit(k,n){return !!n&&(CIDX[k]||[]).some(function(b){return b.u.some(function(u){return String(u.n)===String(n)})})}
 function renderFolder(k){
-  var f=folderOf(k), list=TESTS.filter(function(t){return t.folder===k}), books=CIDX[k]||[];
+  var f=folderOf(k), list=TESTS.filter(function(t){return t.folder===k&&!inBookUnit(k,unitNo(t))}), books=CIDX[k]||[];
   $("fCrumb").textContent=f.n; $("fHead").className="fhead k"+f.c;
   $("fHead").innerHTML='<span class="tag">'+esc(f.n)+'</span><h1>'+esc(f.e)+'</h1>';
   $("fList").className="tlist k"+f.c;
@@ -388,7 +390,7 @@ function renderFolder(k){
   renderBooks(k,f,books,list.length);
 }
 function renderBooks(k,f,books,nt){
-  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">Unit '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+'</span></a>'}).join("")+'</div></div>'}).join("");
+  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">Unit '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+(TESTS.some(function(t){return t.folder===k&&unitNo(t)===String(u.n)})?' · 📝 test':'')+'</span></a>'}).join("")+'</div></div>'}).join("");
   $("fBooks").hidden=!books.length; $("fTestsH").hidden=!(books.length&&nt);
 }
 function unitOf(arg){var p=String(arg||"").split("~"),k=p[0],b=(CIDX[k]||[])[+p[1]],u=b&&b.u[+p[2]];return u?{k:k,f:folderOf(k),b:b,u:u,arg:arg}:null}
@@ -399,7 +401,7 @@ function renderUnit(arg){
   $("uHead").className="fhead k"+x.f.c;
   $("uHead").innerHTML='<span class="tag">'+esc(x.b.b)+'</span><h1>Unit '+esc(x.u.n)+(x.u.t?': '+esc(x.u.t):'')+'</h1>'+(x.u.s?'<span class="note">Âm / chữ trọng tâm: <b>'+esc(x.u.s)+'</b></span>':'');
   $("uActs").innerHTML='<a class="uact k2" data-go="cards" data-arg="'+esc(arg)+'" target="_self" href="#"><span class="ic">🃏</span><b>Thẻ từ</b><span>'+x.u.c+' từ vựng, có hình và giọng đọc mẫu</span><span class="btn small go">Học thẻ từ</span></a>'
-   +'<div class="uact k1"><span class="ic">📝</span><b>Bài test</b><span>Bài kiểm tra theo unit</span><span class="soon">Sắp có</span></div>'
+   +(function(){var ut=TESTS.filter(function(t){return t.folder===x.k&&unitNo(t)===String(x.u.n)});return ut.length?ut.map(function(t){return '<a class="uact k1" data-go="test" data-arg="'+esc(t.id)+'" target="_self" href="#"><span class="ic">📝</span><b>Bài test</b><span>'+esc(t.title)+' · '+t.q.length+' câu · '+t.minutes+' phút</span><span class="btn small go">Làm bài</span></a>'}).join(''):'<div class="uact k1"><span class="ic">📝</span><b>Bài test</b><span>Bài kiểm tra theo unit</span><span class="soon">Sắp có</span></div>'})()
    +(window.HKG&&HKG.hasGames(x)?'<a class="uact k3" data-go="games" data-arg="'+esc(arg)+'" target="_self" href="#"><span class="ic">🎮</span><b>Game</b><span>'+HKG.count(x)+' game ôn từ vựng và mẫu câu, từ dễ đến khó</span><span class="btn small go">Chơi game</span></a>':'<div class="uact k3"><span class="ic">🎮</span><b>Game</b><span>Trò chơi ôn từ vựng</span><span class="soon">Sắp có</span></div>');
 }
 var fcTimer=null, VOICE=null;
