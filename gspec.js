@@ -78,6 +78,90 @@ w: [["desk","bàn học","svg:desk","d"],["dog","con chó","🐶","d"],["doll","
 ["fan","cái quạt","🪭","f"],["farm","trang trại","🐄🌾🏡","f","nostart"],["fish","con cá","🐟","f"],["fork","cái dĩa","svg:fork","f"]],
 r: [["apple","🍎"],["ant","🐜"],["bear","🐻"],["banana","🍌"],["bird","🐦"],["cat","🐱"],["car","🚗"],["cup","☕"],["bed","🛏️"],["ball","⚽"],["sun","☀️"],["tree","🌳"]],
 s: [], g: [], q: [], o: [], t: []
+},
+"g1|Global Success 1|6": {
+title: "In the classroom", sound: "E e", young: true,
+games: [
+{ n: 1, skin: "fish", name: "Câu cá từ vựng (dễ)", plan: [[30, 1], [20, 2]] },
+{ n: 2, skin: "path", name: "Phiêu lưu đảo khủng long (vừa)", plan: [[10, 1], [15, 2], [15, 3], [10, 4]] },
+{ n: 3, skin: "boss", name: "Đấu trùm Vương quốc kẹo (khó)", plan: [[10, 2], [10, 3], [15, 4], [15, 5]] }],
+w: [["bell","cái chuông","🔔"],["pen","bút mực","🖊️"],["pencil","bút chì","✏️"],["red","màu đỏ","🟥"]],
+r: [["ball","⚽"],["bike","🚲"],["book","📖"],["cake","🍰"],["car","🚗"],["cat","🐱"],["cup","☕"],["apple","🍎"],["bag","👜"],["hat","👒"],["dog","🐶"],["duck","🦆"],["door","🚪"],["chicken","🍗"],["chips","🍟"],["fish","🐟"],["milk","🥛"]],
+s: [["It's a red [pen].","🟥🖊️"],["It's a red [pencil].","🟥✏️"],["It's a red [bell].","🟥🔔"]],
+g: [["It's [a|an] red pen.","🟥🖊️"],["[It's|Its,It] a red bell.","🟥🔔"],["It's a [red|reds] pencil.","🟥✏️"]],
+q: [],
+o: ["It's a red pen.","It's a red bell.","It's a red pencil."],
+t: [["It's a red [pen].","🟥🖊️"],["It's a [red] bell.","🟥🔔"],["It's a red [pencil].","🟥✏️"]]
+},
+"g2|Global Success 2|6": {
+title: "On the farm", sound: "X x", young: true,
+games: [
+{ n: 1, skin: "fish", name: "Câu cá từ vựng (dễ)", plan: [[30, 1], [20, 2]] },
+{ n: 2, skin: "path", name: "Phiêu lưu đảo khủng long (vừa)", plan: [[10, 1], [15, 2], [15, 3], [10, 4]] },
+{ n: 3, skin: "boss", name: "Đấu trùm Vương quốc kẹo (khó)", plan: [[10, 2], [10, 3], [15, 4], [15, 5]] }],
+w: [["farm","trang trại","🚜"],["box","cái hộp","📦"],["fox","con cáo","🦊"],["ox","con bò đực","🐂"]],
+r: [["pizza","🍕"],["popcorn","🍿"],["kite","🪁"],["bike","🚲"],["kitten","🐱"],["sea","🌊"],["sand","🏖️"],["rainbow","🌈"],["river","🏞️"],["road","🛣️"],["question","❓"],["square","🟦"],["quiz","📝"]],
+s: [["I can see a [fox].","🦊"],["I can see a [box].","📦"],["I can see an [ox].","🐂"],["I can see a fox on the [farm].","🚜🦊"]],
+g: [["I can see [an|a] ox.","🐂"],["I can see [a|an] fox.","🦊"],["I can [see|sees,seeing] a box.","📦"],["[What|Who,How] can you see? – I can see a fox.","🦊"]],
+q: [{q:"What can you see?",p:"🦊",a:"I can see a fox.",x:["I can see a box.","I can see an ox.","Yes, I can."]},
+{q:"What can you see?",p:"🐂",a:"I can see an ox.",x:["I can see a fox.","I can see a box.","Yes, I can."]},
+{q:"What can you see?",p:"📦",a:"I can see a box.",x:["I can see an ox.","I can see a fox.","Yes, I can."]}],
+o: ["I can see a fox.","I can see an ox.","What can you see?","I can see a box."],
+t: [["I can see a [fox].","🦊"],["I can see an [ox].","🐂"],["I can see a [box].","📦"]]
+},
+"g3|Global Success 3|6": {
+title: "Our school",
+games: [
+{ n: 1, skin: "fish", name: "Câu cá từ vựng (dễ)", plan: [[30, 1], [20, 2]] },
+{ n: 2, skin: "tug", name: "Kéo co tri thức (vừa)", plan: [[10, 1], [15, 2], [15, 3], [10, 4]] },
+{ n: 3, skin: "boss", name: "Đấu trùm Vương quốc kẹo (khó)", plan: [[10, 2], [10, 3], [15, 4], [15, 5]] }],
+w: [["school","trường học","🏫"],["classroom","lớp học","🧑‍🏫"],["library","thư viện","📚"],["playground","sân chơi","🛝"],["computer room","phòng máy tính","💻"],["art room","phòng mỹ thuật","🎨"],["music room","phòng âm nhạc","🎵"],["gym","phòng thể dục","🤸"]],
+r: [["eye","👁️"],["ear","👂"],["nose","👃"],["mouth","👄"],["hand","✋"],["face","🙂"],["dancing","💃"],["singing","🎤"],["painting","🖌️"],["swimming","🏊"],["cooking","🍳"]],
+s: [["Let's go to the [library].","📚"],["Is this our [gym]? – Yes, it is.","🤸"],["Let's go to the [art room].","🎨"],["This is our [classroom].","🧑‍🏫"],["Let's go to the [music room].","🎵"],["Is that our [computer room]? – Yes, it is.","💻"],["Let's go to the [playground].","🛝"]],
+g: [["Is this our school? – Yes, it [is|isn't,are].","🏫"],["Is this our gym? – No, it [isn't|is,aren't].","🎨"],["[Let's|Let,Lets] go to the playground.","🛝"],["Let's go [to|at,on] the library.","📚"],["Is [this|these,those] our art room? – Yes, it is.","🎨"]],
+q: [{q:"Is this our library?",p:"📚",a:"Yes, it is.",x:["No, it isn't.","Yes, I am.","OK, let's go."]},
+{q:"Is this our music room?",p:"🎨",a:"No, it isn't.",x:["Yes, it is.","Yes, I do.","OK, let's go."]},
+{q:"Let's go to the gym.",p:"🤸",a:"OK, let's go.",x:["Yes, it is.","No, it isn't.","I'm fine, thank you."]},
+{q:"Is this our computer room?",p:"💻",a:"Yes, it is.",x:["No, it isn't.","Yes, they are.","Let's go."]}],
+o: ["Let's go to the library.","Is this our school?","Let's go to the playground.","This is our classroom."],
+t: [["Let's go to the [gym].","🤸"],["This is our [library].","📚"],["Is this our [classroom]?","🧑‍🏫"],["Let's go to the [playground].","🛝"]]
+},
+"g4|Global Success 4|6": {
+title: "Our school facilities",
+games: [
+{ n: 1, skin: "fish", name: "Câu cá từ vựng (dễ)", plan: [[25, 1], [25, 2]] },
+{ n: 2, skin: "tug", name: "Kéo co tri thức (vừa)", plan: [[10, 1], [15, 2], [15, 3], [10, 4]] },
+{ n: 3, skin: "boss", name: "Đấu trùm Vương quốc kẹo (khó)", plan: [[10, 2], [10, 3], [15, 4], [15, 5]] }],
+grp: {"city":"p","town":"p","village":"p","mountains":"p","countryside":"p","farm":"p","building":"s","classroom":"s","computer room":"s","garden":"s","playground":"s","library":"s","tree":"n","flower":"n","classmate":"n"},
+w: [["city","thành phố","🏙️"],["town","thị trấn","🏘️"],["village","làng","🛖"],["mountains","núi","⛰️"],["countryside","miền quê","🌾"],["farm","nông trại","🚜"],["building","tòa nhà","🏢"],["classroom","phòng học","🧑‍🏫"],["computer room","phòng máy tính","💻"],["garden","vườn","🌷"],["playground","sân chơi","🛝"],["library","thư viện","📚"],["tree","cây","🌳"],["flower","hoa","🌸"],["classmate","bạn cùng lớp","🧒"]],
+r: [["swim","🏊"],["cook","🍳"],["dance","💃"],["sing","🎤"],["ride a bike","🚲"],["play the piano","🎹"],["birthday","🎂"],["cake","🍰"],["clock","⏰"]],
+s: [["My school is in the [city].","🏙️"],["Her school is in the [mountains].","⛰️"],["His school is in the [village].","🛖"],["There is one [garden] at my school.","🌷"],["There is a big [library] at my school.","📚"],["We play in the [playground] at break time.","🛝"],["There are many trees in the school [garden].","🌳🌷"]],
+g: [["Where's your school? – It's [in|on,at] the city.","🏙️"],["How many classrooms [are|is,am] there?","🧑‍🏫"],["There [is|are,am] one garden at my school.","🌷"],["There [are|is,am] three buildings at my school.","🏢🏢🏢"],["[Where's|Who's,What's] your school? – It's in the village.","🛖"],["How many [buildings|building] are there at your school?","🏢"],["There is one [garden|gardens].","🌷"]],
+q: [{q:"Where's your school?",p:"⛰️",a:"It's in the mountains.",x:["It's in the city.","There are two.","Yes, it is."]},
+{q:"How many gardens are there at your school?",p:"🌷",a:"There is one.",x:["There are one.","It's in the town.","Yes, there is."]},
+{q:"Is there a library at your school?",p:"📚",a:"Yes, there is.",x:["Yes, it is.","There are two.","It's in the city."]},
+{q:"Where's your school?",p:"🏙️",a:"It's in the city.",x:["It's in the village.","It's big.","There is one."]},
+{q:"How many buildings are there?",p:"🏢🏢🏢",a:"There are three.",x:["There is three.","It's in the town.","Yes, there are."]}],
+o: ["Where's your school?","It's in the mountains.","How many classrooms are there?","There is one garden.","There are two playgrounds."],
+t: [["My school is in the [town].","🏘️"],["There is one [garden] at my school.","🌷"],["Her school is in the [village].","🛖"],["There is a big [library].","📚"]]
+},
+"g5|Global Success 5|6": {
+title: "Our school rooms",
+games: [
+{ n: 1, skin: "fish", name: "Câu cá từ vựng (dễ)", plan: [[25, 1], [25, 2]] },
+{ n: 2, skin: "tug", name: "Kéo co tri thức (vừa)", plan: [[10, 1], [15, 2], [15, 3], [10, 4]] },
+{ n: 3, skin: "boss", name: "Đấu trùm Vương quốc kẹo (khó)", plan: [[10, 2], [10, 3], [15, 4], [15, 5]] }],
+grp: {"art room":"r","computer room":"r","library":"r","music room":"r","gym":"r","ground floor":"f","first floor":"f","second floor":"f","third floor":"f","upstairs":"d","downstairs":"d","corridor":"r","left":"d","right":"d"},
+w: [["art room","phòng mỹ thuật","🎨"],["computer room","phòng máy tính","💻"],["library","thư viện","📚"],["music room","phòng âm nhạc","🎵"],["gym","phòng thể dục","🤸"],["ground floor","tầng trệt","0️⃣"],["first floor","tầng một","1️⃣"],["second floor","tầng hai","2️⃣"],["third floor","tầng ba","3️⃣"],["upstairs","lên tầng trên","⬆️"],["downstairs","xuống tầng dưới","⬇️"],["corridor","hành lang","🚪"],["left","bên trái","⬅️"],["right","bên phải","➡️"]],
+r: [["teacher","👩‍🏫"],["doctor","👨‍⚕️"],["farmer","👨‍🌾"],["firefighter","👨‍🚒"],["pilot","👨‍✈️"],["cook","👨‍🍳"]],
+s: [["The library is on the [ground floor].","📚0️⃣"],["The art room is on the [second floor].","🎨2️⃣"],["Go [upstairs] and turn left.","⬆️⬅️"],["We paint pictures in the [art room].","🎨"],["We sing songs in the [music room].","🎵"],["Go along the [corridor] and turn right.","🚪➡️"],["We use computers in the [computer room].","💻"]],
+g: [["[Where's|What's,Who's] the art room? – It's on the second floor.","🎨2️⃣"],["It's [on|in,at] the second floor.","2️⃣"],["Go upstairs and [turn|turns,turning] left.","⬆️⬅️"],["The computer room is on the [third|three,thirty] floor.","💻3️⃣"],["My classroom is on the [first|one,once] floor.","1️⃣"],["Could you tell me the [way|ways] to the gym, please?","🤸"]],
+q: [{q:"Where's the library?",p:"📚0️⃣",a:"It's on the ground floor.",x:["It's on the third floor.","Go to the library.","Yes, it is."]},
+{q:"Could you tell me the way to the gym, please?",p:"⬆️⬅️",a:"Go upstairs and turn left.",x:["Go downstairs and turn right.","It's a big gym.","Yes, I can."]},
+{q:"Which floor is the art room on?",p:"🎨2️⃣",a:"The second floor.",x:["The third floor.","The art room.","Turn left."]},
+{q:"Where's the music room?",p:"🎵1️⃣",a:"It's on the first floor.",x:["It's on the second floor.","I like music.","Go upstairs."]}],
+o: ["Where's the music room?","It's on the first floor.","Go along the corridor.","Could you tell me the way to the library?"],
+t: [["The gym is on the [ground floor].","🤸0️⃣"],["Go upstairs and turn [left].","⬆️⬅️"],["We read books in the [library].","📚"],["The art room is on the [second floor].","🎨2️⃣"]]
 }
 };
 /* ---------- danh sách game mỗi unit ---------- */
@@ -91,6 +175,7 @@ build:  { name: "Xây chữ", ic: "🧱" }
 };
 function gamesFor(key) {
 var S = SPEC[key]; if (!S) return [];
+if (S.games) return S.games;
 if (S.kinder) return [
 { n: 1, skin: "fish",    name: "Câu cá chữ D",            letters: "d",   plan: [[20, 1]] },
 { n: 2, skin: "build",   name: "Xây chữ D – nâng cao",    letters: "d",   plan: [[6, 1], [14, 2]] },
@@ -144,7 +229,7 @@ var REAL = {}; /* từ tiếng Anh có thật – không dùng làm phương án
 "diving sliding singing dancing drawing running walking painting swimming talking waking ruining reporter writer " +
 "waiter garden gardener fighter teacher reacher stories stores story store grow glow flowers flower news new " +
 "chicken kitchen chickens milk mink mike fishes pizza question squares quizzes envelope elephant elbow elbows " +
-"drawling dawning darning drowning dining dinning spinning sinning panting pointing signing sim coo waling walkin wrier dick deck dock dack").split(" ").forEach(function (w) { REAL[w] = 1; });
+"drawling dawning darning drowning dining dinning spinning sinning panting pointing signing sim coo waling walkin wrier dick deck dock dack oed re penn pencel lx px bax ton tow bx far ied redd rd pe bel rx fam fo o bo gm cit tee eight loft let pin pan pun bill ball bull rod rid fix fax ax ex firm form fax").split(" ").forEach(function (w) { REAL[w] = 1; });
 function pools(key, letters) {
 var S = SPEC[key], R = rng(key + "|pool|" + (letters || "")), P = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 var grp = function (w) { return (S.grp && S.grp[w]) || "a"; };

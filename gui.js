@@ -14,6 +14,7 @@ fork: '<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="#8f9aa8"><rect x="29
 };
 function pic(p, cls) {
 if (!p) return "";
+if (/^img:/.test(p)) return '<img class="' + (cls || "") + ' imgpic" src="' + esc(p.slice(4)) + '" alt="" loading="lazy">';
 if (/^svg:/.test(p)) return '<span class="' + (cls || "") + ' svgpic">' + (SVG[p.slice(4)] || "") + "</span>";
 return '<span class="' + (cls || "") + '">' + esc(p) + "</span>";
 }
