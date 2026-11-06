@@ -316,7 +316,7 @@ box.innerHTML = '<div class="galgrid">' + L.map(function (f, i) { return '<butto
 Array.prototype.forEach.call(box.querySelectorAll(".galitem"), function (b) { b.onclick = function () { open(+b.getAttribute("data-i")); }; });
 function open(i) {
 var f = L[i], lb = $("galLb");
-lb.innerHTML = '<div class="lb-in">' + (f.t === "vid" ? '<iframe src="https://drive.google.com/file/d/' + encodeURIComponent(f.id) + '/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>' : '<img src="' + thumb(f, 1600) + '" alt="' + esc(f.n) + '">') + (f.n ? '<p>' + esc(f.n) + "</p>" : "") + '</div><button class="lb-x" type="button" aria-label="Đóng">✕</button>' + (L.length > 1 ? '<button class="lb-p" type="button" aria-label="Ảnh trước">‹</button><button class="lb-n" type="button" aria-label="Ảnh sau">›</button>' : "");
+lb.innerHTML = '<div class="lb-in">' + (f.t === "vid" ? '<iframe src="https://drive.google.com/file/d/' + encodeURIComponent(f.id) + '/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>' : '<img src="' + thumb(f, 1600) + '" alt="' + esc(f.n) + '">') + (f.n ? '<p>' + esc(f.n) + (f.g ? '<br><small class="gnote">' + esc(f.g) + '</small>' : '') + "</p>" : "") + '</div><button class="lb-x" type="button" aria-label="Đóng">✕</button>' + (L.length > 1 ? '<button class="lb-p" type="button" aria-label="Ảnh trước">‹</button><button class="lb-n" type="button" aria-label="Ảnh sau">›</button>' : "");
 lb.hidden = false;
 lb.querySelector(".lb-x").onclick = function () { lb.hidden = true; lb.innerHTML = ""; };
 if (L.length > 1) { lb.querySelector(".lb-p").onclick = function () { open((i - 1 + L.length) % L.length); }; lb.querySelector(".lb-n").onclick = function () { open((i + 1) % L.length); }; }

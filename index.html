@@ -229,8 +229,9 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
 .fc-mini .e img{width:64px;height:64px;object-fit:contain}
 .fc-mini b{font-family:var(--font-display);font-size:1.05rem;overflow-wrap:anywhere}
 .fc-mini small{color:var(--muted);font-weight:700;font-size:.8rem}
+.brandlogo{flex:none;height:44px;width:auto;display:block}
 </style>
-<link rel="stylesheet" href="games.css?v=2">
+<link rel="stylesheet" href="games.css?v=3">
 </head>
 <body>
 <div class="strip"><div class="wrap">
@@ -240,7 +241,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
   <span>Email: <b>hakateenglish@gmail.com</b></span>
 </div></div>
 <header class="top"><div class="wrap">
-  <a class="brand" href="#" data-go="home" target="_self"><span class="logo" id="logoPh">HK</span><span><b>Ha Kate Test Center</b><small>Bài kiểm tra tiếng Anh online</small></span></a>
+  <a class="brand" href="#" data-go="home" target="_self"><img class="brandlogo" src="logo-mark.png?v=3" alt="Ha Kate English"><span id="logoPh" hidden></span><span><b>Ha Kate Test Center</b><small>Bài kiểm tra tiếng Anh online</small></span></a>
   <nav class="tabs">
     <a class="navbtn" href="#" data-go="home" id="navHome" target="_self">Bài kiểm tra</a>
     <a class="navbtn" href="#" data-go="profile" id="navProfile" target="_self">Cô Hà Kate</a>
@@ -555,7 +556,7 @@ run("getData").then(function(d){
 }).catch(function(){ $("loading").innerHTML='<div class="errmsg">Chưa tải được bài kiểm tra. Con tải lại trang nhé.</div>' });
 })();
 </script>
-<script src="gspec.js?v=2"></script>
-<script src="gui.js?v=2"></script>
+<script src="gspec.js?v=3"></script>
+<script src="gui.js?v=3"></script>
 </body>
 </html>
