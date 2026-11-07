@@ -23,7 +23,8 @@ var AC = null, SOUND = lsGet("hk-snd") !== false;
 function beep(ok) {
 if (!SOUND) return;
 try {
-AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+AC = AC || window.__AC || new (window.AudioContext || window.webkitAudioContext)();
+if (AC.state === "suspended" && AC.resume) AC.resume();
 var notes = ok ? [660, 880, 1175] : [300, 220];
 notes.forEach(function (f, i) {
 var o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + i * 0.11;
@@ -81,7 +82,7 @@ $("gGo").onclick = function () {
 var nm = $("gName").value.trim(); if (!nm) { $("gErr").hidden = false; $("gName").focus(); return; }
 lsSet("hk-student", { name: nm, cls: $("gCls").value.trim() });
 try { speechSynthesis.speak(new SpeechSynthesisUtterance(" ")); } catch (e) {}
-try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); AC.resume && AC.resume(); } catch (e) {}
+try { AC = AC || window.__AC || new (window.AudioContext || window.webkitAudioContext)(); AC.resume && AC.resume(); } catch (e) {}
 ST.name = nm; ST.cls = $("gCls").value.trim(); ST.start = Date.now();
 box.innerHTML = '<div class="gm"><div class="gm-top"><button class="gtb" type="button" id="gQuit" aria-label="Thoát">✕</button><span class="gpill" id="gPos"></span><span class="gpill">⭐ <b id="gSc">0</b></span><span class="gpill">🪙 <b id="gCo">0</b></span><span class="gpill" id="gTime">0:00</span><button class="gtb" type="button" id="gSnd" aria-label="Âm thanh">' + (SOUND ? "🔊" : "🔇") + '</button></div>'
 + '<div class="gm-stage" id="gStage"></div><div class="gm-card" id="gCard"></div></div>';
