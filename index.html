@@ -128,6 +128,7 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .stem p{margin:0;min-width:0}
 .say{margin-left:8px;border:1.5px solid var(--accent);background:var(--sheet);color:var(--accent);border-radius:999px;padding:3px 12px;font:inherit;font-weight:800;cursor:pointer;vertical-align:middle}
 .say:hover{background:var(--accent);color:var(--accent-ink)}
+.tts-hint{position:fixed;left:12px;right:12px;bottom:16px;z-index:9999;background:#333;color:#fff;padding:12px 14px;border-radius:12px;font-size:15px;line-height:1.4;box-shadow:0 6px 20px rgba(0,0,0,.25)}
 .aud{display:block;margin:8px 0 2px;width:100%;max-width:360px;height:38px}
 .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;clear:both}
 .opts.long{grid-template-columns:1fr}
@@ -234,7 +235,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
 .fc-mini small{color:var(--muted);font-weight:700;font-size:.8rem}
 .brandlogo{flex:none;height:44px;width:auto;display:block}
 </style>
-<link rel="stylesheet" href="games.css?v=5">
+<link rel="stylesheet" href="games.css?v=6">
 </head>
 <body>
 <div class="strip"><div class="wrap">
@@ -244,7 +245,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
   <span>Email: <b>hakateenglish@gmail.com</b></span>
 </div></div>
 <header class="top"><div class="wrap">
-  <a class="brand" href="#" data-go="home" target="_self"><img class="brandlogo" src="logo-mark.png?v=5" alt="Ha Kate English"><span id="logoPh" hidden></span><span><b>Ha Kate Test Center</b><small>Bài kiểm tra tiếng Anh online</small></span></a>
+  <a class="brand" href="#" data-go="home" target="_self"><img class="brandlogo" src="logo-mark.png?v=6" alt="Ha Kate English"><span id="logoPh" hidden></span><span><b>Ha Kate Test Center</b><small>Bài kiểm tra tiếng Anh online</small></span></a>
   <nav class="tabs">
     <a class="navbtn" href="#" data-go="home" id="navHome" target="_self">Bài kiểm tra</a>
     <a class="navbtn" href="#" data-go="profile" id="navProfile" target="_self">Cô Hà Kate</a>
@@ -407,9 +408,23 @@ function renderUnit(arg){
 }
 var fcTimer=null, VOICE=null;
 function fcStop(){if(fcTimer){clearTimeout(fcTimer);fcTimer=null}try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
-function pickVoice(){try{var v=speechSynthesis.getVoices();VOICE=v.filter(function(x){return /^en[-_]GB/i.test(x.lang)})[0]||v.filter(function(x){return /^en[-_]US/i.test(x.lang)})[0]||v.filter(function(x){return /^en/i.test(x.lang)})[0]||null}catch(e){}}
-try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
-function say(w){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(w);u.lang=VOICE?VOICE.lang:"en-GB";if(VOICE)u.voice=VOICE;u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
+var TTS={ok:!!(window.speechSynthesis&&window.SpeechSynthesisUtterance),unlocked:false,u:null};
+var BADV=/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Junior|Ralph|Fred|Kathy|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley|Novelty/i;
+var GOODV=/Samantha|Daniel|Karen|Moira|Tessa|Serena|Arthur|Martha|Catherine|Kate|Oliver|Google (US|UK) English|Microsoft (Aria|Jenny|Libby|Sonia|Guy|Ryan|Zira|David|Mark|Hazel|George)|Siri/i;
+function pickVoice(){try{var v=speechSynthesis.getVoices()||[];var en=v.filter(function(x){return /^en[-_](GB|US|AU|IE|CA)/i.test(x.lang)&&!BADV.test(x.name)});
+  VOICE=en.filter(function(x){return GOODV.test(x.name)&&/^en[-_]GB/i.test(x.lang)})[0]||en.filter(function(x){return GOODV.test(x.name)})[0]||en.filter(function(x){return x.localService!==false})[0]||en[0]||null}catch(e){}}
+try{pickVoice();if(window.speechSynthesis&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',pickVoice);else if(window.speechSynthesis)speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
+function silentUrl(){var n=800,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);for(var i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
+function ttsUnlock(){if(TTS.unlocked)return;TTS.unlocked=true;
+  try{var a=new Audio(silentUrl());a.setAttribute('playsinline','');a.volume=0.01;var p=a.play();if(p&&p.catch)p.catch(function(){})}catch(e){}
+  try{var A=window.__AC||new (window.AudioContext||window.webkitAudioContext)();window.__AC=A;if(A.resume)A.resume();var b=A.createBuffer(1,1,22050),src=A.createBufferSource();src.buffer=b;src.connect(A.destination);src.start(0)}catch(e){}
+  if(TTS.ok){try{var u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="en-US";speechSynthesis.speak(u)}catch(e){}}}
+['touchend','pointerup','click','keydown'].forEach(function(ev){document.addEventListener(ev,ttsUnlock,true)});
+function say(w,rate){if(!w)return false;if(!TTS.ok){ttsHint();return false}
+  try{var S=speechSynthesis;if(S.paused)S.resume();if(!VOICE)pickVoice();
+    var go=function(){var u=new SpeechSynthesisUtterance(String(w));if(VOICE){u.voice=VOICE;u.lang=VOICE.lang}else u.lang="en-US";u.rate=rate||.8;u.volume=1;TTS.u=u;S.speak(u)};
+    if(S.speaking||S.pending){S.cancel();setTimeout(go,150)}else go();return true}catch(e){return false}}
+function ttsHint(){if(window.__ttsHinted)return;window.__ttsHinted=1;try{var d=document.createElement('div');d.className='tts-hint';d.innerHTML='Trình duyệt này chưa đọc được tiếng Anh. Con mở trang bằng <b>Safari</b> hoặc <b>Chrome</b> (không mở trong Zalo/Facebook) nhé.';document.body.appendChild(d);setTimeout(function(){d.remove()},7000)}catch(e){}}
 function imgHtml(c){var i=String(c[4]||"");var m=i.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=|thumbnail\?id=)([\w-]{20,})/);if(m)i="https://drive.google.com/thumbnail?id="+m[1]+"&sz=w600";
   if(/^https?:\/\//.test(i))return '<img src="'+esc(i)+'" alt="'+esc(c[2])+'">';
   if(i)return /^[0-9]+$/.test(i)?'<span class="num">'+esc(i)+'</span>':esc(i);
@@ -502,7 +517,7 @@ function buildQuiz(){
   form.innerHTML=h; form.classList.remove("done");
 }
 document.addEventListener('play',function(ev){if(ev.target.tagName!=='AUDIO')return;[].forEach.call(document.querySelectorAll('audio.aud'),function(a){if(a!==ev.target)a.pause()})},true);
-if(!window.__sayBound){window.__sayBound=1;document.addEventListener('click',function(ev){var bt=ev.target.closest&&ev.target.closest('.say');if(!bt)return;ev.preventDefault();try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(bt.getAttribute('data-say'));u.lang='en-US';u.rate=0.85;var vs=speechSynthesis.getVoices().filter(function(v){return /^en(-|_)(US|GB)/i.test(v.lang)});if(vs.length)u.voice=vs[0];speechSynthesis.speak(u)}catch(er){}})}
+if(!window.__sayBound){window.__sayBound=1;document.addEventListener('click',function(ev){var bt=ev.target.closest&&ev.target.closest('.say');if(!bt)return;ev.preventDefault();say(bt.getAttribute('data-say'),0.85)})}
 function updateProgress(){var n=answers.filter(function(a){return a!==null}).length;$("barFill").style.width=(n/(answers.length||1)*100)+"%";$("progText").textContent=n+" / "+answers.length}
 function startClock(){stopClock();var tick=function(){if(!T)return;var left=T.minutes*60-Math.floor((Date.now()-startedAt)/1000),a=Math.abs(left);$("clock").textContent=(left<0?"+":"")+Math.floor(a/60)+":"+String(a%60).padStart(2,"0");$("clock").classList.toggle("late",left<0)};tick();clockTimer=setInterval(tick,1000)}
 function stopClock(){if(clockTimer){clearInterval(clockTimer);clockTimer=null}$("clock").textContent=""}
@@ -563,7 +578,7 @@ run("getData").then(function(d){
 }).catch(function(){ $("loading").innerHTML='<div class="errmsg">Chưa tải được bài kiểm tra. Con tải lại trang nhé.</div>' });
 })();
 </script>
-<script src="gspec.js?v=5"></script>
-<script src="gui.js?v=5"></script>
+<script src="gspec.js?v=6"></script>
+<script src="gui.js?v=6"></script>
 </body>
 </html>
