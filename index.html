@@ -235,7 +235,8 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
 .fc-mini small{color:var(--muted);font-weight:700;font-size:.8rem}
 .brandlogo{flex:none;height:44px;width:auto;display:block}
 </style>
-<link rel="stylesheet" href="games.css?v=6">
+<link rel="stylesheet" href="games.css?v=7">
+<link rel="stylesheet" href="quiz.css?v=7">
 </head>
 <body>
 <div class="strip"><div class="wrap">
@@ -245,7 +246,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
   <span>Email: <b>hakateenglish@gmail.com</b></span>
 </div></div>
 <header class="top"><div class="wrap">
-  <a class="brand" href="#" data-go="home" target="_self"><img class="brandlogo" src="logo-mark.png?v=6" alt="Ha Kate English"><span id="logoPh" hidden></span><span><b>Ha Kate Test Center</b><small>Bài kiểm tra tiếng Anh online</small></span></a>
+  <a class="brand" href="#" data-go="home" target="_self"><img class="brandlogo" src="logo-mark.png?v=7" alt="Ha Kate English"><span id="logoPh" hidden></span><span><b>Ha Kate Test Center</b><small>Bài kiểm tra tiếng Anh online</small></span></a>
   <nav class="tabs">
     <a class="navbtn" href="#" data-go="home" id="navHome" target="_self">Bài kiểm tra</a>
     <a class="navbtn" href="#" data-go="profile" id="navProfile" target="_self">Cô Hà Kate</a>
@@ -327,7 +328,7 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
       <button class="btn ghost" type="button" id="retryBtn">Làm lại bài này</button>
       <a class="btn ghost" id="backFolder" href="#" target="_self">Các bài khác</a>
     </div>
-    <p class="note" style="margin:0">Kéo lên trên để xem lại: ô xanh là đáp án đúng, ô đỏ là lựa chọn chưa đúng.</p>
+    <p class="note" style="margin:0">Kéo lên trên để xem lại: viền xanh là đúng, viền đỏ là chưa đúng. Lời bài nghe đã hiện dưới mỗi bài nghe.</p>
   </section>
 </section>
 <section id="vProfile" hidden></section>
@@ -380,10 +381,12 @@ function renderHome(){try{window.HKG&&HKG.galStrip($("galStrip"))}catch(e){}
   $("folderGrid").innerHTML=FOLDERS.map(function(f){var n=TESTS.filter(function(t){return t.folder===f.k}).length;
     return '<a class="folder k'+f.c+'" data-go="folder" data-arg="'+f.k+'" target="_self" href="#"><span class="dot"></span><span class="fn">'+esc(f.n)+'</span><span class="fe">'+esc(f.e)+'</span><span class="fc">'+(function(){var u=(CIDX[f.k]||[]).reduce(function(s,b){return s+b.u.length},0),a=[];if(u)a.push(u+" unit");if(n)a.push(n+" bài");return a.length?a.join(" · "):"Chưa có bài"})()+'</span></a>'}).join("");
 }
-function unitNo(t){var m=String(t.id||'').match(/-u(\d+)(?:-|$)/)||String(t.title||'').match(/Unit\s*(\d+)/i);return m?m[1]:''}
+function reviewOf(t){var m=String(t.id||'').match(/review-u(\d+)-(\d+)/i)||String(t.title||'').match(/Review\s*(?:Unit|U)?\s*(\d+)\s*[–—-]\s*(\d+)/i);return m?{a:+m[1],b:+m[2]}:null}
+function unitNo(t){if(reviewOf(t))return '';var m=String(t.id||'').match(/-u(\d+)(?:-|$)/)||String(t.title||'').match(/Unit\s*(\d+)/i);return m?m[1]:''}
+function reviewPlaced(k,t){var r=reviewOf(t);return !!r&&inBookUnit(k,r.b)}
 function inBookUnit(k,n){return !!n&&(CIDX[k]||[]).some(function(b){return b.u.some(function(u){return String(u.n)===String(n)})})}
 function renderFolder(k){
-  var f=folderOf(k), list=TESTS.filter(function(t){return t.folder===k&&!inBookUnit(k,unitNo(t))}), books=CIDX[k]||[];
+  var f=folderOf(k), list=TESTS.filter(function(t){return t.folder===k&&!inBookUnit(k,unitNo(t))&&!reviewPlaced(k,t)}), books=CIDX[k]||[];
   $("fCrumb").textContent=f.n; $("fHead").className="fhead k"+f.c;
   $("fHead").innerHTML='<span class="tag">'+esc(f.n)+'</span><h1>'+esc(f.e)+'</h1>';
   $("fList").className="tlist k"+f.c;
@@ -392,7 +395,7 @@ function renderFolder(k){
   renderBooks(k,f,books,list.length);
 }
 function renderBooks(k,f,books,nt){
-  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">Unit '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+(TESTS.some(function(t){return t.folder===k&&unitNo(t)===String(u.n)})?' · 📝 test':'')+'</span></a>'}).join("")+'</div></div>'}).join("");
+  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">Unit '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+(TESTS.some(function(t){return t.folder===k&&unitNo(t)===String(u.n)})?' · 📝 test':'')+'</span></a>'+TESTS.filter(function(t){var r=reviewOf(t);return t.folder===k&&r&&String(r.b)===String(u.n)}).map(function(t){var r=reviewOf(t);return '<a class="unit review" data-go="test" data-arg="'+esc(t.id)+'" target="_self" href="#"><span class="un">⭐ Review</span><span class="ut">Ôn tập Unit '+r.a+'–'+r.b+'</span><span class="uc">📝 '+t.q.length+' câu · '+t.minutes+' phút</span></a>'}).join("")}).join("")+'</div></div>'}).join("");
   $("fBooks").hidden=!books.length; $("fTestsH").hidden=!(books.length&&nt);
 }
 function unitOf(arg){var p=String(arg||"").split("~"),k=p[0],b=(CIDX[k]||[])[+p[1]],u=b&&b.u[+p[2]];return u?{k:k,f:folderOf(k),b:b,u:u,arg:arg}:null}
@@ -411,8 +414,10 @@ function fcStop(){if(fcTimer){clearTimeout(fcTimer);fcTimer=null}try{window.spee
 var TTS={ok:!!(window.speechSynthesis&&window.SpeechSynthesisUtterance),unlocked:false,u:null};
 var BADV=/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Junior|Ralph|Fred|Kathy|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley|Novelty/i;
 var GOODV=/Samantha|Daniel|Karen|Moira|Tessa|Serena|Arthur|Martha|Catherine|Kate|Oliver|Google (US|UK) English|Microsoft (Aria|Jenny|Libby|Sonia|Guy|Ryan|Zira|David|Mark|Hazel|George)|Siri/i;
+var VRANK=[/Microsoft Ana .*Natural/i,/Microsoft (Ava|Emma|Jenny|Aria|Michelle|Ana|Andrew|Brian).*Natural/i,/Microsoft \w+ Online \(Natural\)/i,/Google US English/i,/(Ava|Zoe|Evan|Nathan|Allison|Samantha).*(Premium|Enhanced)/i,/Google UK English Female/i,/^(Samantha|Ava|Zoe|Allison|Susan|Karen|Moira|Tessa|Serena|Kate)\b/i];
 function pickVoice(){try{var v=speechSynthesis.getVoices()||[];var en=v.filter(function(x){return /^en[-_](GB|US|AU|IE|CA)/i.test(x.lang)&&!BADV.test(x.name)});
-  VOICE=en.filter(function(x){return GOODV.test(x.name)&&/^en[-_]GB/i.test(x.lang)})[0]||en.filter(function(x){return GOODV.test(x.name)})[0]||en.filter(function(x){return x.localService!==false})[0]||en[0]||null}catch(e){}}
+  VOICE=null;for(var r=0;r<VRANK.length&&!VOICE;r++)VOICE=en.filter(function(x){return VRANK[r].test(x.name)})[0]||null;
+  VOICE=VOICE||en.filter(function(x){return GOODV.test(x.name)})[0]||en.filter(function(x){return x.localService!==false})[0]||en[0]||null}catch(e){}}
 try{pickVoice();if(window.speechSynthesis&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',pickVoice);else if(window.speechSynthesis)speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
 function silentUrl(){var n=800,b=new ArrayBuffer(44+n),v=new DataView(b),w=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);for(var i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}))}
 function ttsUnlock(){if(TTS.unlocked)return;TTS.unlocked=true;
@@ -422,7 +427,7 @@ function ttsUnlock(){if(TTS.unlocked)return;TTS.unlocked=true;
 ['touchend','pointerup','click','keydown'].forEach(function(ev){document.addEventListener(ev,ttsUnlock,true)});
 function say(w,rate){if(!w)return false;if(!TTS.ok){ttsHint();return false}
   try{var S=speechSynthesis;if(S.paused)S.resume();if(!VOICE)pickVoice();
-    var go=function(){var u=new SpeechSynthesisUtterance(String(w));if(VOICE){u.voice=VOICE;u.lang=VOICE.lang}else u.lang="en-US";u.rate=rate||.8;u.volume=1;TTS.u=u;S.speak(u)};
+    var go=function(){var u=new SpeechSynthesisUtterance(String(w));if(VOICE){u.voice=VOICE;u.lang=VOICE.lang}else u.lang="en-US";u.rate=rate||(/Natural|Google/.test(VOICE&&VOICE.name||"")?1:.95);u.pitch=1.12;u.volume=1;TTS.u=u;S.speak(u)};
     if(S.speaking||S.pending){S.cancel();setTimeout(go,150)}else go();return true}catch(e){return false}}
 function ttsHint(){if(window.__ttsHinted)return;window.__ttsHinted=1;try{var d=document.createElement('div');d.className='tts-hint';d.innerHTML='Trình duyệt này chưa đọc được tiếng Anh. Con mở trang bằng <b>Safari</b> hoặc <b>Chrome</b> (không mở trong Zalo/Facebook) nhé.';document.body.appendChild(d);setTimeout(function(){d.remove()},7000)}catch(e){}}
 function imgHtml(c){var i=String(c[4]||"");var m=i.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=|thumbnail\?id=)([\w-]{20,})/);if(m)i="https://drive.google.com/thumbnail?id="+m[1]+"&sz=w600";
@@ -472,7 +477,7 @@ function fcBind(){
   $("fcNext").onclick=function(){FC.i=FC.i<FC.list.length-1?FC.i+1:0;fcRender()};
 }
 document.addEventListener("keydown",function(e){if($("vCards").hidden||!FC||FC.all||!FC.list||!FC.list.length||/INPUT|TEXTAREA|BUTTON/.test((e.target||{}).tagName||""))return;if(e.key==="ArrowRight")$("fcNext").click();else if(e.key==="ArrowLeft"&&FC.i>0)$("fcPrev").click()});
-var T=null, answers=[], submitted=false, startedAt=0, clockTimer=null, form=$("quiz");
+var T=null, answers=[], EXS={}, submitted=false, startedAt=0, clockTimer=null, form=$("quiz");
 function keyOf(t){return "hkg-progress-"+t.id}
 function partsOf(t){return t.parts.map(function(p,i){return {t:p.t,from:p.from,to:p.to,n:i+1}})}
 function openExam(t){
@@ -485,13 +490,14 @@ function openExam(t){
   answers=t.q.map(function(){return null});
   var saved=ls.get(keyOf(t));
   $("result").hidden=true; $("startErr").hidden=true; $("sendErr").hidden=true; hideWarn();
-  if(saved&&saved.answers&&saved.answers.length===t.q.length&&who.name){answers=saved.answers;startedAt=saved.start||Date.now();beginExam()}
+  EXS={};
+  if(saved&&saved.answers&&saved.answers.length===t.q.length&&who.name){answers=saved.answers;EXS=saved.ex||{};startedAt=saved.start||Date.now();beginExam()}
   else{$("startCard").hidden=false;$("examBody").hidden=true}
 }
 $("startBtn").addEventListener("click",function(){
   if(!$("sName").value.trim()){$("startErr").hidden=false;$("sName").focus();return}
   $("startErr").hidden=true; saveWho();
-  if($("examBody").hidden){startedAt=Date.now();answers=T.q.map(function(){return null});beginExam()}else{$("startCard").hidden=true;$("startBtn").textContent="Bắt đầu làm bài"}
+  if($("examBody").hidden){startedAt=Date.now();answers=T.q.map(function(){return null});EXS={};beginExam()}else{$("startCard").hidden=true;$("startBtn").textContent="Bắt đầu làm bài"}
 });
 ["sName","sClass"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter")$("startBtn").click()})});
 $("changeWho").addEventListener("click",function(){$("startCard").hidden=false;$("startBtn").textContent="Lưu tên";$("sName").focus()});
@@ -499,29 +505,18 @@ function saveWho(){ls.set("hk-student",{name:$("sName").value.trim(),cls:$("sCla
 function beginExam(){
   $("startCard").hidden=true; $("examBody").hidden=false; $("submitBox").hidden=false; $("submitBtn").disabled=false; $("submitBtn").textContent="Nộp bài";
   saveWho(); buildQuiz();
-  answers.forEach(function(a,i){if(a!==null){var r=$("r"+i+"_"+a);if(r)r.checked=true}});
   $("examBar").hidden=false; updateProgress(); startClock(); saveProgress();
 }
 function buildQuiz(){
-  var h="";
-  partsOf(T).forEach(function(p){
-    h+='<section class="part"><div class="part-head"><span class="eyebrow">Part '+p.n+' · Câu '+p.from+'–'+p.to+'</span><h2>'+esc(p.t)+'</h2></div>';
-    for(var i=p.from-1;i<p.to&&i<T.q.length;i++){
-      var stem=T.q[i][0], say=null, sm=/\{\{say:([^}]*)\}\}/.exec(stem); if(sm){say=sm[1].trim();stem=stem.replace(sm[0],'').trim()} var au=null, am=/\{\{audio:([\w-]+)\}\}/.exec(stem); if(am){au=am[1];stem=stem.replace(am[0],'').trim()} var opts=T.q[i][1], long=opts.some(function(o){return String(o).length>22});
-      h+='<fieldset class="q" id="q'+(i+1)+'"><legend class="stem"><span class="qn">'+(i+1)+'.</span><p>'+esc(stem)+(say?' <button type="button" class="say" data-say="'+esc(say)+'">🔊 Nghe</button>':'')+'</p>'+(au?'<audio class="aud" controls preload="none" src="audio/'+esc(au)+'.mp3"></audio>':'')+'</legend><div class="opts'+(long?" long":"")+'">';
-      opts.forEach(function(o,j){h+='<label class="opt" id="o'+i+'_'+j+'"><input type="radio" name="a'+i+'" id="r'+i+'_'+j+'" value="'+j+'"><span class="l">'+L[j]+'</span><span class="t">'+esc(o)+'</span></label>'});
-      h+='</div></fieldset>';
-    }
-    h+='</section>';
-  });
-  form.innerHTML=h; form.classList.remove("done");
+  HKQ.build(form,T,answers,EXS,function(){updateProgress();saveProgress();hideWarn()});
+  $("result").classList.remove("party");
 }
 document.addEventListener('play',function(ev){if(ev.target.tagName!=='AUDIO')return;[].forEach.call(document.querySelectorAll('audio.aud'),function(a){if(a!==ev.target)a.pause()})},true);
-if(!window.__sayBound){window.__sayBound=1;document.addEventListener('click',function(ev){var bt=ev.target.closest&&ev.target.closest('.say');if(!bt)return;ev.preventDefault();say(bt.getAttribute('data-say'),0.85)})}
+if(!window.__sayBound){window.__sayBound=1;document.addEventListener('click',function(ev){var bt=ev.target.closest&&ev.target.closest('.say');if(!bt)return;ev.preventDefault();say(bt.getAttribute('data-say'))})}
 function updateProgress(){var n=answers.filter(function(a){return a!==null}).length;$("barFill").style.width=(n/(answers.length||1)*100)+"%";$("progText").textContent=n+" / "+answers.length}
 function startClock(){stopClock();var tick=function(){if(!T)return;var left=T.minutes*60-Math.floor((Date.now()-startedAt)/1000),a=Math.abs(left);$("clock").textContent=(left<0?"+":"")+Math.floor(a/60)+":"+String(a%60).padStart(2,"0");$("clock").classList.toggle("late",left<0)};tick();clockTimer=setInterval(tick,1000)}
 function stopClock(){if(clockTimer){clearInterval(clockTimer);clockTimer=null}$("clock").textContent=""}
-function saveProgress(){if(T&&!submitted)ls.set(keyOf(T),{answers:answers,start:startedAt})}
+function saveProgress(){if(T&&!submitted)ls.set(keyOf(T),{answers:answers,ex:HKQ.ex(),start:startedAt})}
 form.addEventListener("change",function(e){if(submitted)return;var m=e.target.name&&e.target.name.match(/^a(\d+)$/);if(!m)return;answers[+m[1]]=+e.target.value;updateProgress();saveProgress();hideWarn()});
 form.addEventListener("submit",function(e){e.preventDefault()});
 function hideWarn(){$("warnBox").hidden=true;$("confirmBtn").hidden=true}
@@ -537,11 +532,10 @@ function finish(){
   run("submitTest",{id:T.id,name:$("sName").value.trim(),cls:$("sClass").value.trim(),answers:answers,minutes:Math.round((Date.now()-startedAt)/60000)})
   .then(function(r){
     submitted=true; stopClock(); $("examBar").hidden=true;
-    form.classList.add("done"); Array.prototype.forEach.call(form.querySelectorAll("input"),function(i){i.disabled=true});
-    T.q.forEach(function(q,i){var k=r.key[i],a=answers[i],box=$("q"+(i+1));$("o"+i+"_"+k).classList.add("is-key");if(a===k)box.classList.add("right");else{box.classList.add("wrong");if(a!==null)$("o"+i+"_"+a).classList.add("is-miss")}});
+    HKQ.mark(r.key);
     var pct=Math.round(r.sc/r.tot*100);
     $("resWho").textContent="Kết quả của "+$("sName").value.trim();
-    $("scoreBig").innerHTML=r.sc+"<small> / "+r.tot+"</small>";
+    $("scoreBig").innerHTML='<span class="stars">'+[1,2,3].map(function(n){return '<i class="'+(pct>=[1,50,80][n-1]?"on":"")+'">★</i>'}).join("")+'</span>'+r.sc+"<small> / "+r.tot+"</small>"; if(pct>=50)confetti();
     $("praise").textContent=pct>=85?"Xuất sắc! Excellent work!":pct>=70?"Rất tốt! Great job!":pct>=50?"Khá lắm! Con xem lại các câu sai rồi làm lại nhé.":"Cố lên con! Xem đáp án màu xanh và luyện thêm nhé.";
     $("partScores").innerHTML=partsOf(T).map(function(p,k){return '<div class="ps"><span>Part '+p.n+' · '+esc(p.t)+'</span><b>'+r.parts[k].c+' / '+r.parts[k].t+'</b></div>'}).join("");
     $("submitBox").hidden=true; ls.del(keyOf(T));
@@ -553,7 +547,8 @@ function finish(){
     $("sendErr").hidden=false;
   });
 }
-$("retryBtn").addEventListener("click",function(){ls.del(keyOf(T));submitted=false;$("result").hidden=true;startedAt=Date.now();answers=T.q.map(function(){return null});beginExam();window.scrollTo({top:0,behavior:"smooth"})});
+$("retryBtn").addEventListener("click",function(){ls.del(keyOf(T));submitted=false;$("result").hidden=true;startedAt=Date.now();answers=T.q.map(function(){return null});EXS={};beginExam();window.scrollTo({top:0,behavior:"smooth"})});
+function confetti(){try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;var c=["#ff6b5b","#3ba9ee","#22b8a5","#7c5cff","#ffc93c","#7bc96f"],box=document.createElement("div");box.className="confetti";for(var i=0;i<70;i++){var e=document.createElement("i");e.style.left=Math.random()*100+"%";e.style.background=c[i%6];e.style.animationDelay=(Math.random()*.6)+"s";e.style.animationDuration=(1.6+Math.random()*1.4)+"s";e.style.transform="rotate("+(Math.random()*360)+"deg)";box.appendChild(e)}document.body.appendChild(box);setTimeout(function(){box.remove()},3600)}catch(e){}}
 function pimg(k,alt,fb){return PH[k]?'<img src="'+PH[k]+'" alt="'+esc(alt)+'">':(fb||"")}
 function renderProfile(){
   var H=[["Giám khảo","Giám khảo Festival Trạng Nguyên Tiếng Anh toàn quốc – mùa thi 2026 có hơn 200.000 học sinh tham gia",3],["Ý · Đức · Mỹ","Thạc sĩ tại Ý, trao đổi học thuật tại Đức, chương trình trao đổi giáo viên tại University of Massachusetts Lowell (Hoa Kỳ)",2],["20 quốc gia","Học tập, công tác và trải nghiệm văn hóa tại 20 quốc gia trên 3 châu lục",1],["Bộ GD&ĐT","Hơn 8 năm công tác tại Ban Quản lý Đề án Ngoại ngữ Quốc gia",4],["Được vinh danh","Bằng ghi nhận của Đại sứ Hoa Kỳ về đóng góp cho giảng dạy tiếng Anh tại Việt Nam (2020)",5],["Tốt nghiệp Giỏi","Cử nhân Sư phạm Tiếng Anh – Trường ĐH Ngoại ngữ, ĐHQG Hà Nội",6]];
@@ -578,7 +573,8 @@ run("getData").then(function(d){
 }).catch(function(){ $("loading").innerHTML='<div class="errmsg">Chưa tải được bài kiểm tra. Con tải lại trang nhé.</div>' });
 })();
 </script>
-<script src="gspec.js?v=6"></script>
-<script src="gui.js?v=6"></script>
+<script src="gspec.js?v=7"></script>
+<script src="gui.js?v=7"></script>
+<script src="quiz.js?v=7"></script>
 </body>
 </html>
