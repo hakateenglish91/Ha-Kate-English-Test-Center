@@ -13,23 +13,27 @@
  */
 (function(){
 "use strict";
+var EN=false, T_={vi:{part:"Câu",aud:"Bài nghe",audq:"câu",audtip:"Bấm ▶ để nghe, nghe lại được",read:"📖 Đọc đoạn sau rồi làm câu",mtip:"👆 Chạm một thẻ rồi chạm vào ô trống (hoặc kéo thả thẻ vào ô)",ptip:"👆 Chạm số rồi chạm vào ô cạnh đáp án (hoặc kéo thả số vào ô)",ord:"Sắp xếp lại cho đúng",reset:"↺ Xếp lại",ph:"Chạm các thẻ bên dưới theo đúng thứ tự",script:"📝 Lời bài nghe",key:"Đáp án",right:"✔ Đúng rồi!",t:"Đúng",f:"Sai"},en:{part:"Questions",aud:"Listening",audq:"Questions",audtip:"Press ▶ to listen. You can listen again.",read:"📖 Read and answer questions",mtip:"👆 Tap a card, then tap a box (or drag the card into a box).",ptip:"👆 Tap a number, then tap the box next to the answer (or drag it).",ord:"Put the words in the correct order.",reset:"↺ Start again",ph:"Tap the cards below in the correct order.",script:"📝 Audio script",key:"Answer",right:"✔ Correct!",t:"True",f:"False"}};
+function L_(k){return T_[EN?"en":"vi"][k]}
 var Q=[], ANS=null, EX={}, CB=null, DONE=false, FORM=null, SEL=null, KEY=null;
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function fmt(s){return esc(s).replace(/\s*¶\s*/g,"<br>")}
 function tags(stem){var o={},t=String(stem||"").replace(/\{\{(\w+)(?::([^}]*))?\}\}/g,function(_,k,v){o[k]=v==null?"":v.trim();return " "});o.text=t.replace(/\s+/g," ").trim();return o}
 function imgSrc(n){n=String(n).trim();return "img/"+(n.indexOf(".")>0?n:"pic/"+n+".png")}
+function imgAlt(n){n=String(n).trim();return n.indexOf(".")>0?n.split("/").pop():n+".png"}
+function imgTag(n,cls){return '<img'+(cls?' class="'+cls+'"':'')+' src="'+esc(imgSrc(n))+'" data-alt="'+esc(imgAlt(n))+'" onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=\'\'}" alt="" loading="lazy">'}
 function optImg(o){var m=/^\s*\[img:([\w.\/-]+)\]\s*$/.exec(o);return m?m[1]:null}
 function norm(s){return String(s).toLowerCase().replace(/[’‘`]/g,"'").replace(/\s+([?.!,])/g,"$1").replace(/\s+/g," ").trim()}
 function same(a,b){return norm(a)===norm(b)}
 function idxOf(opts,v){for(var j=0;j<opts.length;j++)if(same(opts[j],v))return j;return -1}
 var EMO=null;try{EMO=new RegExp("^((?:\\p{Extended_Pictographic}|\\u200d|\\ufe0f|[\\u2795-\\u2797]|\\s)+)","u")}catch(e){}
 function stemHtml(q,big){var t=q.tg.text,h="";
-  if(q.tg.img)h+='<img class="qimg" src="'+esc(imgSrc(q.tg.img))+'" alt="" loading="lazy">';
+  if(q.tg.img)h+=imgTag(q.tg.img,"qimg");
   var m=EMO&&EMO.exec(t);if(m&&m[1].trim()){h+='<span class="qemo">'+esc(m[1].trim())+'</span>';t=t.slice(m[1].length).trim()}
   if(t)h+='<span class="qtx">'+esc(t)+'</span>';
   if(q.tg.say!=null)h+=' <button type="button" class="say" data-say="'+esc(q.tg.say)+'">🔊 Nghe</button>';
   return h}
-function optHtml(o){var im=optImg(o);return im?'<img src="'+esc(imgSrc(im))+'" alt="" loading="lazy">':esc(o)}
+function optHtml(o){var im=optImg(o);return im?imgTag(im):esc(o)}
 var DAYS=["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 function sortLabels(a){
   if(a.every(function(x){return /^\d+$/.test(String(x).trim())}))return a.slice().sort(function(x,y){return x-y});
@@ -44,12 +48,12 @@ function uiOf(q){var u=q.tg.ui;if(u==null)return "";return u.split(":")[0]}
 
 /* ---------- vẽ bài ---------- */
 function build(form,T,answers,ex,onChange){
-  FORM=form;ANS=answers;EX=ex||{};CB=onChange;DONE=false;SEL=null;KEY=null;
+  EN=!/^(kinder|g1|g2)$/i.test(String(T.folder||""));FORM=form;ANS=answers;EX=ex||{};CB=onChange;DONE=false;SEL=null;KEY=null;
   Q=T.q.map(function(q,i){return {i:i,tg:tags(q[0]),opts:q[1]}});
   var h="",col=0;
   T.parts.forEach(function(p,pn){col=col%6+1;
     var a=p.from-1,b=Math.min(p.to,Q.length)-1;
-    h+='<section class="part qz k'+col+'"><div class="qz-head"><span class="qz-ic">'+partIcon(p.t)+'</span><div><span class="eyebrow">Part '+(pn+1)+' · Câu '+p.from+'–'+(b+1)+'</span><h2>'+esc(p.t)+'</h2></div></div>';
+    h+='<section class="part qz k'+col+'"><div class="qz-head"><span class="qz-ic">'+partIcon(p.t)+'</span><div><span class="eyebrow">Part '+(pn+1)+' · '+L_("part")+' '+p.from+'–'+(b+1)+'</span><h2>'+esc(p.t)+'</h2></div></div>';
     var i=a;
     while(i<=b){var q=Q[i],c=[i],j=i+1;
       if(q.tg.audio){while(j<=b&&Q[j].tg.audio===q.tg.audio){c.push(j);j++}}
@@ -64,8 +68,8 @@ function build(form,T,answers,ex,onChange){
 function cluster(c){
   var q=Q[c[0]],h='<div class="qc">';
   if(q.tg.audio){var sc="";c.forEach(function(i){if(Q[i].tg.script)sc+=(sc?"¶":"")+Q[i].tg.script});
-    h+='<div class="aud-box"><div class="aud-h"><span class="aud-ic">🎧</span><b>Bài nghe '+(c.length>1?'câu '+(c[0]+1)+'–'+(c[c.length-1]+1):'câu '+(c[0]+1))+'</b><span>Bấm ▶ để nghe, nghe lại được</span></div><audio class="aud" controls preload="none" src="audio/'+esc(q.tg.audio)+'.mp3"></audio>'+(sc?'<details class="script" hidden><summary>📝 Lời bài nghe</summary><div>'+fmt(sc)+'</div></details>':'')+'</div>'}
-  if(q.tg.passage)h+='<div class="passage"><div class="ps-h">📖 Đọc đoạn sau rồi làm câu '+(c[0]+1)+(c.length>1?'–'+(c[c.length-1]+1):'')+'</div>'+passageHtml(q.tg.passage)+'</div>';
+    h+='<div class="aud-box"><div class="aud-h"><span class="aud-ic">🎧</span><b>'+L_("aud")+' · '+L_("audq")+' '+(c.length>1?(c[0]+1)+'–'+(c[c.length-1]+1):(c[0]+1))+'</b><span>'+L_("audtip")+'</span></div><audio class="aud" controls preload="none"><source src="audio/'+esc(q.tg.audio)+'.mp3" type="audio/mpeg"><source src="'+esc(q.tg.audio)+'.mp3" type="audio/mpeg"></audio>'+(sc?'<details class="script" hidden><summary>'+L_("script")+'</summary><div>'+fmt(sc)+'</div></details>':'')+'</div>'}
+  if(q.tg.passage)h+='<div class="passage"><div class="ps-h">'+L_("read")+' '+(c[0]+1)+(c.length>1?'–'+(c[c.length-1]+1):'')+'</div>'+passageHtml(q.tg.passage)+'</div>';
   var k=0;
   while(k<c.length){var u=uiOf(Q[c[k]]),g=[c[k]],m=k+1;
     if(u==="match"||u==="place"){while(m<c.length&&Q[c[m]].tg.ui===Q[c[k]].tg.ui){g.push(c[m]);m++}h+=u==="match"?matchW(g):placeW(g)}
@@ -74,25 +78,25 @@ function cluster(c){
   return h+'</div>'}
 function single(q){var u=uiOf(q),i=q.i,wide=u==="order"||q.opts.some(function(o){return String(o).length>24})||q.tg.text.length>70,h='<div class="qcard'+(wide?' wide':'')+'" id="q'+(i+1)+'" data-q="'+i+'"><div class="qhead"><span class="qn">'+(i+1)+'</span><div class="qstem">';
   if(u==="fill"){var t=q.tg.text,parts=t.split(/_{2,}|…/);
-    if(q.tg.img)h+='<img class="qimg" src="'+esc(imgSrc(q.tg.img))+'" alt="" loading="lazy">';
+    if(q.tg.img)h+=imgTag(q.tg.img,"qimg");
     h+='<span class="qtx fillw">'+(parts.length>1?esc(parts[0])+'<span class="blank" id="b'+i+'">?</span>'+esc(parts.slice(1).join("___")):esc(t)+' <span class="blank" id="b'+i+'">?</span>')+'</span>';
     if(q.tg.say!=null)h+=' <button type="button" class="say" data-say="'+esc(q.tg.say)+'">🔊 Nghe</button>';
     h+='</div></div><div class="chs tiles">'+q.opts.map(function(o,j){return '<button type="button" class="ch qtile" data-q="'+i+'" data-o="'+j+'" id="o'+i+'_'+j+'">'+optHtml(o)+'</button>'}).join("")+'</div></div>';return h}
   if(u==="order"){var src=q.tg.tiles!=null?q.tg.tiles:q.tg.text,pcs=src.split(/\s*\/\s*/).filter(function(x){return x!==""}),stem=q.tg.tiles!=null?q.tg.text:"";
-    var t2={tg:{text:stem,img:q.tg.img,say:q.tg.say}};h+=stemHtml(t2)+(stem?'':'<span class="qtx hint">Sắp xếp lại cho đúng</span>');
-    h+='</div></div><div class="ord" data-q="'+i+'"><div class="ord-ans" data-q="'+i+'"></div><div class="ord-bank">'+pcs.map(function(p,j){return '<button type="button" class="otile" data-q="'+i+'" data-p="'+j+'">'+esc(p)+'</button>'}).join("")+'</div><button type="button" class="ord-reset" data-q="'+i+'">↺ Xếp lại</button></div><div class="fix" id="f'+i+'" hidden></div></div>';
+    var t2={tg:{text:stem,img:q.tg.img,say:q.tg.say}};h+=stemHtml(t2)+(stem?'':'<span class="qtx hint">'+L_("ord")+'</span>');
+    h+='</div></div><div class="ord" data-q="'+i+'"><div class="ord-ans" data-q="'+i+'" data-ph="'+esc(L_("ph"))+'"></div><div class="ord-bank">'+pcs.map(function(p,j){return '<button type="button" class="otile" data-q="'+i+'" data-p="'+j+'">'+esc(p)+'</button>'}).join("")+'</div><button type="button" class="ord-reset" data-q="'+i+'">'+L_("reset")+'</button></div><div class="fix" id="f'+i+'" hidden></div></div>';
     q.pcs=pcs;q.join=pcs.every(function(x){return x.length===1})?"":" ";return h}
   h+=stemHtml(q)+'</div></div>';
   var allImg=q.opts.every(optImg),tick=q.opts.every(function(o){return /^(✓|✗|✔|✘|true|false|yes|no)$/i.test(String(o).trim())}),short=q.opts.every(function(o){return String(o).trim().length<=2});
   var cls=allImg?"chs pics":tick?"chs ticks":short?"chs shorts":q.opts.some(function(o){return String(o).length>24})?"chs long":"chs";
   h+='<div class="'+cls+'">'+q.opts.map(function(o,j){var lab=allImg?String.fromCharCode(65+j):"";
-    var inner=tick?(/^(✓|✔|true|yes)$/i.test(o.trim())?'<span class="tk ok">✓</span><span>'+(/true|yes/i.test(o)?esc(o):'Đúng')+'</span>':'<span class="tk no">✗</span><span>'+(/false|no/i.test(o)?esc(o):'Sai')+'</span>'):optHtml(o);
+    var inner=tick?(/^(✓|✔|true|yes)$/i.test(o.trim())?'<span class="tk ok">✓</span><span>'+(/true|yes/i.test(o)?esc(o):L_("t"))+'</span>':'<span class="tk no">✗</span><span>'+(/false|no/i.test(o)?esc(o):L_("f"))+'</span>'):optHtml(o);
     return '<button type="button" class="ch" data-q="'+i+'" data-o="'+j+'" id="o'+i+'_'+j+'">'+(lab?'<span class="lab">'+lab+'</span>':(!tick&&!short?'<span class="lab">'+String.fromCharCode(65+j)+'</span>':''))+inner+'</button>'}).join("")+'</div></div>';
   return h}
-function matchW(g){var u=union(g),h='<div class="mw" data-kind="match"><div class="qztip">👆 Chạm một thẻ rồi chạm vào ô trống (hoặc kéo thả thẻ vào ô)</div><div class="qzrows">';
+function matchW(g){var u=union(g),h='<div class="mw" data-kind="match"><div class="qztip">'+L_("mtip")+'</div><div class="qzrows">';
   g.forEach(function(i){var q=Q[i];h+='<div class="qzrow" id="q'+(i+1)+'"><span class="qn">'+(i+1)+'</span><div class="qzlbl">'+stemHtml(q)+'</div><div class="qslot" data-q="'+i+'"></div><div class="fix" id="f'+i+'" hidden></div></div>'});
   h+='</div><div class="qbank">'+u.map(function(v){return '<button type="button" class="qtile" data-v="'+esc(v)+'">'+optHtml(v)+'</button>'}).join("")+'</div></div>';return h}
-function placeW(g){var u=union(g),h='<div class="mw place" data-kind="place"><div class="qztip">👆 Chạm số rồi chạm vào ô cạnh đáp án (hoặc kéo thả số vào ô)</div><div class="qzrows">';
+function placeW(g){var u=union(g),h='<div class="mw place" data-kind="place"><div class="qztip">'+L_("ptip")+'</div><div class="qzrows">';
   u.forEach(function(v){h+='<div class="qzrow"><div class="qzlbl"><span class="qtx">'+optHtml(v)+'</span></div><div class="qslot" data-v="'+esc(v)+'"></div></div>'});
   h+='</div><div class="qbank">'+g.map(function(i){var t=Q[i].tg.text.replace(/^number\s*/i,"");return '<button type="button" class="qtile num" id="q'+(i+1)+'" data-q="'+i+'">'+esc(t||String(i+1))+'</button>'}).join("")+'</div><div class="fix" id="fp'+g[0]+'" hidden></div></div>';
   Q[g[0]].pg=g;return h}
@@ -160,12 +164,12 @@ function mark(key){DONE=true;KEY=key;unsel();FORM.classList.add("done");
     if(u==="match"){var row=card;row.classList.add(ok?"right":"wrong");if(!ok){var f=document.getElementById("f"+i);f.innerHTML="✔ "+optHtml(q.opts[k]);f.hidden=false}return}
     if(u==="place"){card.classList.add(ok?"right":"wrong");return}
     if(card)card.classList.add(ok?"right":"wrong");
-    if(u==="order"){var f2=document.getElementById("f"+i);f2.innerHTML=ok?"✔ Đúng rồi!":"✔ Đáp án: <b>"+esc(q.opts[k])+"</b>";f2.hidden=false;return}
+    if(u==="order"){var f2=document.getElementById("f"+i);f2.innerHTML=ok?L_("right"):"✔ "+L_("key")+": <b>"+esc(q.opts[k])+"</b>";f2.hidden=false;return}
     var kb=document.getElementById("o"+i+"_"+k);if(kb)kb.classList.add("is-key");
     if(!ok&&a!=null&&a>=0){var mb=document.getElementById("o"+i+"_"+a);if(mb)mb.classList.add("is-miss")}
     var bl=document.getElementById("b"+i);if(bl){bl.innerHTML=optHtml(q.opts[k]);bl.classList.add(ok?"good":"bad")}
   });
-  Q.forEach(function(q){if(q.pg){var f=document.getElementById("fp"+q.pg[0]);f.innerHTML="✔ Đáp án: "+q.pg.map(function(i){return '<b>'+esc(Q[i].tg.text.replace(/^number\s*/i,""))+'</b> → '+esc(Q[i].opts[key[i]])}).join(" · ");f.hidden=false}});
+  Q.forEach(function(q){if(q.pg){var f=document.getElementById("fp"+q.pg[0]);f.innerHTML="✔ "+L_("key")+": "+q.pg.map(function(i){return '<b>'+esc(Q[i].tg.text.replace(/^number\s*/i,""))+'</b> → '+esc(Q[i].opts[key[i]])}).join(" · ");f.hidden=false}});
 }
 window.HKQ={build:build,mark:mark,ex:function(){return EX},tags:tags};
 })();
