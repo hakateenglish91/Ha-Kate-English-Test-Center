@@ -21,7 +21,7 @@
 .qtx.hint{color:var(--muted);font-weight:700;font-size:.95rem}
 .qimg{width:96px;height:96px;object-fit:contain;border-radius:14px;background:#fff;padding:4px;border:2px solid var(--line)}
 .qemo{font-size:2.6rem;line-height:1}
-.chs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+.chs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
 .chs.long{grid-template-columns:1fr}
 .chs.shorts{grid-template-columns:repeat(auto-fit,minmax(64px,1fr));max-width:420px}
 .chs.ticks{grid-template-columns:repeat(2,minmax(0,150px))}
@@ -82,7 +82,7 @@
 /* sắp xếp chữ / từ */
 .ord{margin-top:10px}
 .ord-ans{min-height:54px;border-radius:14px;border:2.5px dashed var(--qc);padding:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--qbg)}
-.ord-ans:empty::before{content:"Chạm các thẻ bên dưới theo đúng thứ tự";color:var(--muted);font-size:.9rem;font-weight:700;padding:0 6px}
+.ord-ans:empty::before{content:attr(data-ph);color:var(--muted);font-size:.9rem;font-weight:700;padding:0 6px}
 .ord-bank{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:46px}
 .otile{font:inherit;font-weight:900;font-size:1.1rem;color:var(--ink);background:var(--sheet);border:2px solid var(--qc);border-bottom-width:4px;border-radius:12px;padding:6px 12px;cursor:pointer;min-width:42px}
 .ord-ans .otile{background:var(--qc);color:#fff;border-color:var(--qc)}
@@ -116,3 +116,11 @@
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:1000;overflow:hidden}
 .confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;animation:qzfall 2s ease-in forwards}
 @keyframes qzfall{to{top:105vh;transform:rotate(720deg) translateX(40px)}}
+
+/* chữ dài không tràn ra ngoài ô */
+.chs>.ch{min-width:0}
+.ch,.ch>span{overflow-wrap:anywhere;word-break:break-word}
+.ch{line-height:1.25}
+.qtile,.otile{max-width:100%;overflow-wrap:anywhere}
+.qc{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+@media (max-width:560px){.qc{grid-template-columns:1fr}.chs{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}}
