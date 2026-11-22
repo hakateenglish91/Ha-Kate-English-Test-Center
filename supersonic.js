@@ -73,13 +73,34 @@ var U = [
       ["climb","leo, trèo","🧗","Monkeys [climb] trees.",["clime","clim","climbe"]],["parents","bố mẹ","👪","My [parents] took me to the park.",["parints","perents","parrents"]],["improve","cải thiện","📈","Reading every day will [improve] your spelling.",["impruve","improov","imprve"]],["money","tiền","💷","I saved my [money] in a piggy bank.",["muny","mony","monney"]],["whole","toàn bộ","🍕","He ate the [whole] pizza!",["holle","hoal","wole"]],
       ["busy","bận rộn","🏃","Mum is very [busy] today.",["bizzy","bisy","buzy"]],["hour","giờ","⏰","The film lasted one [hour].",["owr","howr","hower"]],["half","một nửa","🌗","I ate [half] of the cake.",["harf","haff","halph"]],["sugar","đường","🍬","Don't put too much [sugar] in your tea.",["shugar","suger","shuger"]],["move","di chuyển","➡️","Please [move] your chair.",["moove","muve","moov"]],
       ["eye","con mắt","👁️","I have something in my [eye].",["ie","eie","eey"]],["pretty","xinh đẹp","🎀","She has a [pretty] dress.",["pritty","prety","pritey"]],["behind","phía sau","🙈","The cat is hiding [behind] the sofa.",["behynd","beehind","bihind"]],["improve","cải thiện","📈","",[]],["wild","hoang dã","🐯","Tigers are [wild] animals.",["wiled","wyld","wilde"]],["poor","nghèo","🥺","The [poor] man had no money.",["pooer","pur","poar"]],["sure","chắc chắn","👌","Are you [sure] it's right?",["shure","shur","suer"]],["steak","miếng thịt bò","🥩","Dad cooked a [steak] for dinner.",["stayk","staek","steik"]]].filter(function (x, i, a) { return x[3]; })
-}
+},
+{ n: 9, t: "Prefix un-", s: "un-", rule: "Just add un- to the root word – don't change the spelling. un- means NOT, or DO THE OPPOSITE.", pre: "un", kind: "un",
+  /* [gốc, từ mới, nghĩa, hình, cách viết sai, nghĩa tiếng Anh] – Supersonic Spelling Friends: Prefix un- */
+  w: [["well","unwell","ốm, không khỏe","🤒",["unwel","unnwell","onwell","anwell"],"poorly – feeling ill"],["tie","untie","cởi (nút, dây)","👟",["untye","unntie","untei","ontie"],"make a knot or laces loose"],
+      ["happy","unhappy","không vui, buồn","😢",["unhapy","unnhappy","unhappey","onhappy"],"not happy"],["pleasant","unpleasant","khó chịu, khó ưa","🦨",["unpleasent","unplesant","unpleazant","unnpleasant"],"nasty – like a skunk's smell"],
+      ["lock","unlock","mở khóa","🔑",["unlok","unnlock","unlokc","onlock"],"open with a key"],["kind","unkind","không tử tế","😠",["unkined","unnkind","unkynd","onkind"],"not kind – mean"],
+      ["cover","uncover","mở nắp, để lộ ra","🦴",["uncuver","unkover","uncovr","oncover"],"take the cover off"],["afraid","unafraid","không sợ hãi","🦸",["unafrayed","unnafraid","unafriad","unafrade"],"brave – not scared"],
+      ["zip","unzip","kéo khóa (mở)","🧥",["unzipp","unnzip","unzep","onzip"],"open a zip"],["pack","unpack","dỡ đồ ra (khỏi vali)","🧳",["unpak","unnpack","unpakc","onpack"],"take things out of a suitcase"],
+      ["expected","unexpected","bất ngờ","😲",["unexpectid","unexspected","unexpeckted","unnexpected"],"a big surprise"],["lucky","unlucky","không may","⚽",["unluky","unluckey","unlukky","unnlucky"],"not lucky"],
+      ["comfortable","uncomfortable","không thoải mái","🪨",["uncomfortible","unconfortable","uncomfterble","unncomfortable"],"not comfy"],["tidy","untidy","bừa bộn","🧦",["untydy","untidey","untidie","unntidy"],"messy"],
+      ["safe","unsafe","không an toàn","⚠️",["unsayf","unnsafe","unsaff","onsafe"],"not safe – dangerous"],["do","undo","gỡ ra, hoàn tác","↩️",["undoo","unndo","ondo","undu"],"go back to how it was"],
+      ["fold","unfold","mở (tờ gấp) ra","🗺️",["unfoald","unnfold","unfowld","onfold"],"open out a folded map"],["wrap","unwrap","mở giấy gói","🎁",["unrap","unwrapp","unnwrap","unwrop"],"take the paper off a present"]],
+  sen: [["I had a sore throat and felt [unwell], so I stayed in bed.","🤒"],["Can you help me [untie] this knot in my shoelace?","👟"],["Leo dropped his ice cream and felt very [unhappy].","😢"],["The skunk left an [unpleasant] smell in the garden.","🦨"],["Use the golden key to [unlock] the treasure chest.","🔑"],["It is [unkind] to laugh when someone falls over.","😠"],["The archaeologist used a brush to [uncover] the old bones.","🦴"],["The girl rolled down the big ramp. She was [unafraid]!","🦸"],["Please [unzip] your pencil case and take out a ruler.","✏️"],["After the holiday, we had to [unpack] our suitcases.","🧳"],["A parcel came that nobody was waiting for. It was [unexpected].","📦"],["We lost the match 0–7. We were so [unlucky].","⚽"],["These new shoes are too tight. They are [uncomfortable].","👞"],["Toys and socks all over the floor! What an [untidy] room!","🧦"],["Playing near a busy road is [unsafe].","🚗"],["I pressed the wrong button. How do I [undo] it?","↩️"],["Let's [unfold] the map and find the beach.","🗺️"],["It's my birthday! I can't wait to [unwrap] my presents.","🎁"]],
+  /* câu chọn: từ gốc hay từ có un- (2 phương án) */
+  pair: [["It's cold outside. Please ___ your coat before you go out.",["zip","unzip"],0,"🧥"],["It's very hot in class. You can ___ your coat now.",["unzip","zip"],0,"🥵"],["Remember to ___ the front door when you leave the house.",["unlock","lock"],1,"🚪"],["Ben shared his snack with the new boy. That was very ___.",["unkind","kind"],1,"🍪"],["Laughing at someone who falls over is ___.",["unkind","kind"],0,"😠"],["She took her medicine and now she is ___ again.",["well","unwell"],0,"💊"],["Please ___ your laces so you don't trip.",["tie","untie"],0,"👟"],["Our new sofa is soft and ___.",["comfortable","uncomfortable"],0,"🛋️"],["The roses had a sweet, ___ smell.",["pleasant","unpleasant"],0,"🌹"],["My little brother is ___ of the dark.",["afraid","unafraid"],0,"🌑"],["Can you ___ your paper in half to make a card?",["fold","unfold"],0,"💌"],["Before the trip, we ___ our suitcases.",["pack","unpack"],0,"🧳"]],
+  /* câu hỏi cố định thêm: [cấp độ, câu hỏi, phương án, đáp án, hình] */
+  ex: [[2,"Which word does NOT have the prefix un- ?",["under","unkind","unwell","unsafe"],0,""],[2,"Which word does NOT have the prefix un- ?",["untie","uncle","unlock","undo"],1,""],[2,"Which word does NOT have the prefix un- ?",["unhappy","unit","unpack","unzip"],1,""],[2,"Which word does NOT have the prefix un- ?",["uniform","unlucky","untidy","unfold"],0,""],
+      [2,"When we add the prefix un- to a word, …",["it means \"very\"","it means more than one","it means NOT or the opposite","it means it happened yesterday"],2,"💡"],[2,"un + necessary = ?",["unecessary","unnecessary","unnecesary","unecesary"],1,"🔤"],[2,"un + natural = ?",["unatural","unnatural","unnatrual","unnaturel"],1,"🔤"],
+      [3,"🔑📦 Choose the best sentence.",["I unfolded the box with the key.","I unzipped the box with the key.","I unlocked the box with the key.","I untied the box with the key."],2,""],[3,"⚽ HOME 0 – AWAY 7. Choose the best sentence.",["The home team was unafraid today.","The home team was unlucky today.","The home team was unexpected today.","The home team was untidy today."],1,""],
+      [3,"🦨 Choose the best sentence.",["The skunk made an unpleasant smell.","The skunk made an unsafe smell.","The skunk made an untidy smell.","The skunk made an unkind smell."],0,""],[3,"🧳 Choose the best sentence.",["We unlocked our suitcase into the cupboard.","We untied our clothes after the trip.","We unpacked our suitcase after the trip.","We unwrapped our suitcase after the trip."],2,""],
+      [3,"🎁 Choose the best sentence.",["She untied her present into pieces.","She unpacked her present from the paper.","She unzipped her present and smiled.","She unwrapped her present and smiled."],3,""],[3,"Tom's bedroom has toys and socks all over the floor. It is ___.",["unlucky","untidy","unafraid","unwell"],1,"🧸"]] }
 ];
 /* ---------- thẻ từ ---------- */
 var cards = [], books = [{ b: BOOK, u: [] }];
 U.forEach(function (u) {
   var list;
   if (u.kind === "ph" || u.kind === "sw") list = u.w.map(function (w) { return [BOOK, String(u.n), w[0], w[1] + (u.kind === "ph" ? "  ·  " + w[3] : ""), w[2]]; });
+  else if (u.kind === "un") list = u.w.map(function (w) { return [BOOK, String(u.n), w[1], "un + " + w[0] + "  ·  " + w[2], w[3]]; });
   else list = u.w.map(function (w) { return [BOOK, String(u.n), w[1], w[0] + " + " + (u.kind === "pl" ? "plural" : u.kind === "fl" ? (/ful$/.test(w[1]) ? "ful" : "less") : u.suf) + "  ·  " + w[2], w[3]]; });
   cards = cards.concat(list);
   books[0].u.push({ n: String(u.n), t: u.t, s: u.s, c: list.length });
@@ -96,6 +117,7 @@ function last(w) { return w[w.length - 1]; }
 /* cách viết sai hay gặp cho từng loại hậu tố (không trùng từ đúng) */
 function wrongForms(u, w) {
   var r = w[0], nw = w[1], L = last(r), out = [];
+  if (u.kind === "un") return (w[4] || []).filter(function (x) { return x !== nw && ALL[x] !== 1; });
   if (u.kind === "ed") out = [r + L + "ed", r + "t", r + "d", r + "id", nw.replace(/ed$/, "ted")];
   else if (u.kind === "ing") out = [r + L + "ing", r + "in", r + "eing", r + "ign", r + "ng"];
   else if (u.kind === "er") out = [r + L + "er", r + "ar", r + "or", r + "ur", r + "re"];
@@ -129,15 +151,15 @@ function pools(u) {
     /* 1. nhìn tranh – chọn từ */
     var others = u.w.filter(function (x) { return x !== w; }).map(function (x) { return isWord ? x[0] : x[1]; });
     c = opts4(R, word, others);
-    if (/^(ed|ing|pl|ph)$/.test(u.kind)) add(1, { k: "p2w", p: pic, q: isWord ? "What is it?" : "Which word matches the picture?", ins: "Look at the picture and choose the word.", say: "", opts: c.opts, ans: c.ans, word: word });
+    if (/^(ed|ing|pl|ph|un)$/.test(u.kind)) add(1, { k: "p2w", p: pic, q: isWord ? "What is it?" : "Which word matches the picture?", ins: "Look at the picture and choose the word.", say: "", opts: c.opts, ans: c.ans, word: word });
     if (!isWord) {
       /* 1. gốc + hậu tố = ? */
       var sufTxt = u.kind === "pl" ? "" : (u.kind === "fl" ? (/ful$/.test(w[1]) ? "ful" : "less") : u.suf);
       c = opts4(R, w[1], wr);
-      add(1, { k: "sfill", p: pic, q: u.kind === "pl" ? "one " + w[0] + ", two ____" : w[0] + " + " + sufTxt + " = ____", ins: u.kind === "pl" ? "Choose the plural." : "Add the suffix. Choose the new word.", say: "", opts: c.opts, ans: c.ans, word: word });
+      add(1, { k: "sfill", p: pic, q: u.kind === "pl" ? "one " + w[0] + ", two ____" : u.kind === "un" ? "un + " + w[0] + " = ____" : w[0] + " + " + sufTxt + " = ____", ins: u.kind === "pl" ? "Choose the plural." : u.kind === "un" ? "Add the prefix un-. Choose the new word." : "Add the suffix. Choose the new word.", say: "", opts: c.opts, ans: c.ans, word: word });
       /* 2. tìm từ gốc */
       var roots = u.w.filter(function (x) { return x[0] !== w[0]; }).map(function (x) { return x[0]; });
-      var tricky = [w[1].slice(0, -1), w[0] + last(w[0]), w[0].slice(0, -1)].filter(function (x) { return x !== w[0] && x.length > 1; });
+      var tricky = (u.kind === "un" ? [w[1].slice(1), "un", w[0] + last(w[0])] : [w[1].slice(0, -1), w[0] + last(w[0]), w[0].slice(0, -1)]).filter(function (x) { return x !== w[0] && x.length > 1; });
       c = opts4(R, w[0], tricky.concat(shuffle(roots, R).slice(0, 3)));
       add(2, { k: "root", p: "", q: u.kind === "pl" ? "“" + w[1] + "” – what is the singular (one)?" : "What is the root word of “" + w[1] + "”?", ins: u.kind === "pl" ? "Choose the word for one." : "Find the root word.", say: w[1], opts: c.opts, ans: c.ans, word: word });
     } else {
@@ -152,9 +174,9 @@ function pools(u) {
           add(2, { k: "miss", p: pic, q: gap, ins: "Which letters are missing?", say: w[0], opts: c.opts, ans: c.ans, word: word });
         }
       } else {
-        var i2 = 1 + Math.floor(R() * Math.max(1, w[0].length - 3)), part = w[0].substr(i2, 2);
+        var mw = u.kind === "un" ? w[1] : w[0], i2 = (u.kind === "un" ? 2 : 1) + Math.floor(R() * Math.max(1, mw.length - (u.kind === "un" ? 4 : 3))), part = mw.substr(i2, 2);
         c = opts4(R, part, ["ae", "ou", "ea", "ie", "oo", "ar", "er", "ur", "al", "ul"].filter(function (x) { return x !== part; }));
-        add(2, { k: "miss", p: "", q: w[0].slice(0, i2) + "__" + w[0].slice(i2 + 2), ins: "Which letters are missing?", say: w[0], opts: c.opts, ans: c.ans, word: word });
+        add(2, { k: "miss", p: "", q: mw.slice(0, i2) + "__" + mw.slice(i2 + 2), ins: "Which letters are missing?", say: mw, opts: c.opts, ans: c.ans, word: word });
       }
     }
     /* 2. chọn từ viết đúng (không nghe) */
@@ -166,7 +188,7 @@ function pools(u) {
       add(3, { k: "tiles", p: pic, q: "Make the word.", ins: "Listen and put the letters in order.", listen: true, say: word, tiles: t, target: word, word: word });
     }
     /* 4. nghe – viết (chính tả) */
-    add(4, { k: "type", p: pic, q: isWord ? "Listen and write the word." : "Write: " + (u.kind === "pl" ? "one " + w[0] + " → many …" : w[0] + " + " + (u.kind === "fl" ? (/ful$/.test(w[1]) ? "ful" : "less") : u.suf)), ins: "Listen and write the word.", listen: true, say: word, target: word, word: "type-" + word });
+    add(4, { k: "type", p: pic, q: isWord ? "Listen and write the word." : "Write: " + (u.kind === "pl" ? "one " + w[0] + " → many …" : u.kind === "un" ? "un + " + w[0] : w[0] + " + " + (u.kind === "fl" ? (/ful$/.test(w[1]) ? "ful" : "less") : u.suf)), ins: "Listen and write the word.", listen: true, say: word, target: word, word: "type-" + word });
   });
   /* 3. điền từ vào câu */
   (u.sen || []).concat(u.kind === "sw" ? u.w.map(function (w) { return [w[3], w[2]]; }) : []).forEach(function (s) {
@@ -208,6 +230,17 @@ function pools(u) {
     var c = { opts: shuffle(o, R) }; c.ans = c.opts.indexOf(right);
     P[2].push({ k: "cmp", lv: 2, young: false, p: w[3], q: stem, ins: stem, say: "", ask: "", opts: c.opts, ans: c.ans, word: "c-" + w[0] });
   });
+  if (u.kind === "un") {
+    var mn = u.w.map(function (w) { return w[5]; });
+    u.w.forEach(function (w) {
+      var c = opts4(R, w[5], mn);
+      P[2].push({ k: "umean", lv: 2, young: false, p: w[3], q: "What does “" + w[1] + "” mean?", ins: "Choose the meaning.", say: w[1], ask: w[1], opts: c.opts, ans: c.ans, word: "m-" + w[1] });
+      var ws = u.w.map(function (x) { return x[1]; }); c = opts4(R, w[1], ws);
+      P[3].push({ k: "umean2", lv: 3, young: false, p: "", q: "Which word means “" + w[5] + "”?", ins: "Choose the word that matches the meaning.", say: "", ask: "", opts: c.opts, ans: c.ans, word: "m2-" + w[1] });
+    });
+    (u.pair || []).forEach(function (x, i) { P[3].push({ k: "upair", lv: 3, young: false, p: x[3], q: x[0].replace("___", "____"), ins: "Root word or un- word? Choose the word that makes sense.", say: "", ask: "", opts: x[1].slice(), ans: x[2], word: "p" + i }); });
+    (u.ex || []).forEach(function (x, i) { P[x[0]].push({ k: "uex", lv: x[0], young: false, p: x[4], q: x[1], ins: x[1].indexOf("sentence") >= 0 ? "Choose the best sentence." : "Choose the best answer.", say: "", ask: "", opts: x[2].slice(), ans: x[3], word: "x" + i }); });
+  }
   return P;
 }
 function pickN(P, lv, n, seed) {
