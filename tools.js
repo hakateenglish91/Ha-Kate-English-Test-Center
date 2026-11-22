@@ -2,13 +2,13 @@
 (function () {
 "use strict";
 var TOOLS = [
-  { id: "goi-ten", icon: "📣", name: "Gọi tên lên bảng", dir: "tools/goi-ten-len-bang/",
+  { id: "goi-ten", icon: "📣", name: "Gọi tên lên bảng", dir: "TAI-LEN-GITHUB/tools/goi-ten-len-bang/",
     desc: "Bộ 4 trò chơi chọn ngẫu nhiên, công bằng 1–5 học sinh lên bảng, có hiệu ứng, âm thanh và đồng hồ trả lời. Nhập danh sách lớp một lần (dán từ Excel/Word), dùng chung cho cả 4 trò.",
     open: "0-Trang-chu.html", openTxt: "Mở trang chọn trò chơi",
     games: [["🛸", "Phi thuyền bắt người", "1-Phi-thuyen-bat-nguoi.html"], ["🧸", "Máy gắp thú", "2-May-gap-thu.html"], ["🎣", "Câu cá vàng", "3-Cau-ca-vang.html"], ["🎱", "Lồng cầu may mắn", "4-Long-cau-may-man.html"]],
     keys: "Space: gọi tên · D: danh sách · T: đồng hồ · Enter: xong",
     files: [["📘", "Hướng dẫn sử dụng (PDF)", "Huong-dan-su-dung.pdf"], ["📊", "Danh sách lớp mẫu (Excel)", "Danh-sach-lop-mau.xlsx"]] },
-  { id: "manh-ghep", icon: "🧩", name: "Mảnh ghép bí mật", dir: "tools/manh-ghep-bi-mat/",
+  { id: "manh-ghep", icon: "🧩", name: "Mảnh ghép bí mật", dir: "TAI-LEN-GITHUB/tools/manh-ghep-bi-mat/",
     desc: "Trò chơi lật ô – đoán ảnh – tìm từ khoá cho cả lớp. Soạn bộ câu hỏi (dán từ Word/Excel), chọn ảnh bí mật và từ khoá; các đội chọn ô, trả lời đúng thì lộ thêm một phần ảnh.",
     open: "Manh-ghep-bi-mat.html", openTxt: "Mở trò chơi",
     tip: "Màn soạn có đáp án – nên soạn trước giờ học, không bật máy chiếu khi đang soạn.",
