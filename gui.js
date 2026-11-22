@@ -182,6 +182,7 @@ else if (q.k === "first" || q.k === "miss") promptH = '<div class="gq word">' + 
 else promptH = '<div class="gq">' + esc(q.q).replace("____", '<span class="blank">______</span>') + "</div>";
 var insH = q.ins && q.ins !== q.q ? '<div class="gins">' + esc(q.ins) + "</div>" : "";
 promptH = insH + promptH;
+if (q.pass) promptH = '<div class="gpass">' + q.pass + "</div>" + promptH;
 if (fish) {
 $("gQ").innerHTML = '<div class="gc-top">' + lvl + sayBtn + "</div>" + (p ? '<div class="gpicbox sm">' + p + "</div>" : "") + promptH + '<div class="gfb" id="gFb" aria-live="polite"></div>';
 var water = $("gWater"); Array.prototype.forEach.call(water.querySelectorAll(".fishopt"), function (f) { f.remove(); });

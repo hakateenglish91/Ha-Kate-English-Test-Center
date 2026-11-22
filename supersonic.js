@@ -93,7 +93,11 @@ var U = [
       [2,"When we add the prefix un- to a word, …",["it means \"very\"","it means more than one","it means NOT or the opposite","it means it happened yesterday"],2,"💡"],[2,"un + necessary = ?",["unecessary","unnecessary","unnecesary","unecesary"],1,"🔤"],[2,"un + natural = ?",["unatural","unnatural","unnatrual","unnaturel"],1,"🔤"],
       [3,"🔑📦 Choose the best sentence.",["I unfolded the box with the key.","I unzipped the box with the key.","I unlocked the box with the key.","I untied the box with the key."],2,""],[3,"⚽ HOME 0 – AWAY 7. Choose the best sentence.",["The home team was unafraid today.","The home team was unlucky today.","The home team was unexpected today.","The home team was untidy today."],1,""],
       [3,"🦨 Choose the best sentence.",["The skunk made an unpleasant smell.","The skunk made an unsafe smell.","The skunk made an untidy smell.","The skunk made an unkind smell."],0,""],[3,"🧳 Choose the best sentence.",["We unlocked our suitcase into the cupboard.","We untied our clothes after the trip.","We unpacked our suitcase after the trip.","We unwrapped our suitcase after the trip."],2,""],
-      [3,"🎁 Choose the best sentence.",["She untied her present into pieces.","She unpacked her present from the paper.","She unzipped her present and smiled.","She unwrapped her present and smiled."],3,""],[3,"Tom's bedroom has toys and socks all over the floor. It is ___.",["unlucky","untidy","unafraid","unwell"],1,"🧸"]] }
+      [3,"🎁 Choose the best sentence.",["She untied her present into pieces.","She unpacked her present from the paper.","She unzipped her present and smiled.","She unwrapped her present and smiled."],3,""],[3,"Tom's bedroom has toys and socks all over the floor. It is ___.",["unlucky","untidy","unafraid","unwell"],1,"🧸"]],
+  /* bài đọc trong bài test: [câu hỏi, phương án, đáp án] */
+  read: { title: "The Unexpected Parcel", pic: "📦",
+    text: "On Saturday morning, an unexpected parcel arrived at Sam's house. Sam was unwell, so he was in bed, feeling unhappy. Mum brought the parcel upstairs. It was tied up with string in a big knot. Sam tried to untie it, but the knot was too tight, so Mum helped him.\nNext, Sam began to unwrap the shiny paper. Inside was a small wooden box with a lock. \"How can I unlock it?\" asked Sam. Then he saw a tiny key stuck under the box!\nInside the box was a folded note. Sam unfolded it and read: \"Get well soon, Sam! Love from Grandpa.\" Under the note were his favourite sweets. Sam wasn't unhappy any more.",
+    q: [["Why was the parcel a surprise?",["Nobody was expecting it.","It was very big.","Sam ordered it.","It was from the shop."],0],["Why was Sam in bed?",["He was unlucky.","He was unwell.","He was tired after a party.","It was night time."],1],["What did Mum help Sam to do?",["unlock the door","unzip his coat","untie the string","unpack his bag"],2],["What did Sam do with the shiny paper?",["He folded it.","He wrapped a box in it.","He threw it away first.","He unwrapped it."],3],["How did Sam open the wooden box?",["He untied it.","He unlocked it with a tiny key.","Mum opened it with a knife.","He unzipped it."],1],["What did Sam do to the note before he read it?",["He unwrapped it.","He unpacked it.","He unfolded it.","He uncovered it."],2],["\"Sam wasn't unhappy any more.\" This means Sam felt …",["happy","unhappy","unwell","unafraid"],0]] } }
 ];
 /* ---------- thẻ từ ---------- */
 var cards = [], books = [{ b: BOOK, u: [] }];
@@ -256,10 +260,17 @@ var GAMES = [
   { n: 3, skin: "boss", name: "Game 3 · Đấu trùm Vương quốc kẹo (khó)", plan: [[8, 2], [12, 3], [10, 4]] },
   { n: 4, skin: "tug", name: "📝 Bài test cuối chủ đề (30 câu)", plan: [[6, 1], [8, 2], [8, 3], [8, 4]], test: true }
 ];
+function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function readQs(u) {
+  var r = u.read, pass = "<b>" + esc(r.title) + "</b>" + r.text.split("\n").map(function (x) { return "<p>" + esc(x) + "</p>"; }).join("");
+  return r.q.map(function (x, i) { return { k: "read", lv: 3, young: false, p: "", pass: pass, q: (i + 1) + ". " + x[0], ins: "Read the story and choose the best answer.", say: "", ask: "", opts: x[1].slice(), ans: x[2], word: "rd" + i }; });
+}
 function build(u, g) {
   var P = pools(u), out = [];
   if (g.optsOnly) [1, 2].forEach(function (lv) { P[lv] = P[lv].filter(function (q) { return q.opts; }); });
-  g.plan.forEach(function (pl) { out = out.concat(pickN(P, pl[1], pl[0], "ss|" + u.n + "|" + g.n)); });
+  /* bài test có bài đọc: bớt câu các cấp để vẫn đủ 30 câu, bài đọc đặt sau phần cấp 3 */
+  if (g.test && u.read) [[5, 1], [6, 2], [6, 3], ["read"], [6, 4]].forEach(function (pl) { out = out.concat(pl[0] === "read" ? readQs(u) : pickN(P, pl[1], pl[0], "ss|" + u.n + "|" + g.n)); });
+  else g.plan.forEach(function (pl) { out = out.concat(pickN(P, pl[1], pl[0], "ss|" + u.n + "|" + g.n)); });
   return out.map(function (q, i) { var c = JSON.parse(JSON.stringify(q)); c.i = i; delete c.answered; return c; });
 }
 function unitOfKey(key) { var m = /^ss\|[^|]+\|(\d+)$/.exec(key || ""); if (!m) return null; for (var i = 0; i < U.length; i++) if (String(U[i].n) === m[1]) return U[i]; return null; }
@@ -271,5 +282,6 @@ if (GS) {
   GS.build = function (key, game) { var u = unitOfKey(key); return u ? build(u, game) : oBuild.apply(this, arguments); };
 }
 if (window.HKG && window.HKG.count) { var oc = window.HKG.count; window.HKG.count = function (x) { return x && x.k === "ss" ? 3 : oc(x); }; }
+if (typeof document !== "undefined" && !document.getElementById("ss-pass-css")) { var st = document.createElement("style"); st.id = "ss-pass-css"; st.textContent = ".gpass{background:#fff8e1;color:#3b2a10;border-radius:14px;padding:12px 14px;margin:0 0 10px;text-align:left;font-size:1rem;line-height:1.6;max-height:42vh;overflow:auto}.gpass b{display:block;font-size:1.1rem;margin-bottom:4px;color:#b2342a}.gpass p{margin:0 0 6px}"; document.head.appendChild(st); }
 window.HKSS = { folder: { k: "ss", n: "Supersonic", e: "UK Phonics · Spelling Friends", c: 6 }, books: books, cards: cards, units: U, build: build, games: GAMES, pools: pools };
 })();
