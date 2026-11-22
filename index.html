@@ -332,11 +332,12 @@ a.uact{cursor:pointer;transition:transform .15s} a.uact:hover{transform:translat
   </section>
 </section>
 <section id="vProfile" hidden></section>
+<section id="vTools" hidden></section>
 </main>
 <footer class="foot"><div class="wrap">
   <div><b class="fb">CLB Tiếng Anh Cô Hà Kate</b><p>Ms. Hà Kate · Nguyễn Thị Thu Hà<br>Mầm non · Tiểu học · THCS · B1 · B2</p></div>
   <div><b class="fb">Liên hệ</b><div class="phone">0977 748 991</div><p>Zalo / Điện thoại</p><p style="user-select:all;overflow-wrap:anywhere">hakateenglish@gmail.com</p><a class="btn small" href="https://zalo.me/0977748991" target="_blank" rel="noopener">Nhắn Zalo cho cô</a></div>
-  <div><b class="fb">Địa điểm</b><p>Quận Hoàng Mai, Hà Nội, Việt Nam</p><p class="note" style="color:inherit;opacity:.7">© 2026 Ha Kate Test Center</p></div>
+  <div><b class="fb">Địa điểm</b><p>Quận Hoàng Mai, Hà Nội, Việt Nam</p><p class="note" style="color:inherit;opacity:.7">© 2026 Ha Kate Test Center</p><a class="btn small" href="#tools" data-go="tools" target="_self">🧰 Class Tools (giáo viên)</a></div>
 </div></footer>
 <script>
 (function(){
@@ -359,7 +360,7 @@ function run(fn,arg){
 }
 var skipHash=false;
 function parseHash(){var h=location.hash.replace(/^#\/?/,""),i=h.indexOf("/");if(!h)return {v:"home",a:""};return i<0?{v:h,a:""}:{v:h.slice(0,i),a:decodeURIComponent(h.slice(i+1))}}
-var VIEWS=["vHome","vFolder","vUnit","vCards","vGames","vPlay","vGallery","vExam","vProfile"];
+var VIEWS=["vHome","vFolder","vUnit","vCards","vGames","vPlay","vGallery","vExam","vProfile","vTools"];
 function show(v){document.body.classList.toggle("kid",["vFolder","vUnit","vCards","vGames","vPlay"].indexOf(v)>=0);VIEWS.forEach(function(x){$(x).hidden=x!==v});$("navHome").setAttribute("aria-current",v!=="vProfile"?"page":"false");$("navProfile").setAttribute("aria-current",v==="vProfile"?"page":"false")}
 function go(view,arg,noPush){
   $("examBar").hidden=true; stopClock(); fcStop(); try{window.HKG&&HKG.stop()}catch(e){}
@@ -372,6 +373,7 @@ function go(view,arg,noPush){
   if(view==="cards"){show("vCards");openCards(arg);window.scrollTo(0,0);return}
   if(view==="folder"){show("vFolder");renderFolder(arg);window.scrollTo(0,0);return}
   if(view==="profile"){show("vProfile");renderProfile();window.scrollTo(0,0);return}
+  if(view==="tools"&&window.HKTOOLS){show("vTools");HKTOOLS.render($("vTools"));window.scrollTo(0,0);return}
   show("vHome");renderHome();window.scrollTo(0,0);
 }
 window.addEventListener("hashchange",function(){if(skipHash){skipHash=false;return}var s=parseHash();go(s.v,s.a,true)});window.addEventListener("popstate",function(){if(!location.hash){go("home",null,true)}});
@@ -595,8 +597,9 @@ run("getData").then(function(d){
 })();
 </script>
 <script src="gspec.js?v=7"></script>
-<script src="gui.js?v=8"></script>
-<script src="supersonic.js?v=4"></script>
+<script src="gui.js?v=9"></script>
+<script src="supersonic.js?v=5"></script>
+<script src="tools.js?v=1"></script>
 <script src="media.js?v=1"></script>
 <script src="quiz.js?v=8"></script>
 </body>

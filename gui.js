@@ -206,6 +206,7 @@ body = '<div class="typebox"><input type="text" id="gIn" autocomplete="off" auto
 }
 $("gCard").className = "gm-card k" + (1 + ST.i % 6);
 $("gCard").innerHTML = '<div class="gc-top">' + lvl + sayBtn + "</div>" + (p ? '<div class="gpicbox">' + p + "</div>" : "") + promptH + body + '<div class="gfb" id="gFb" aria-live="polite"></div>';
+var gpx = document.querySelector("#gCard .gpass"); if (gpx) { gpx.scrollTop = ST.passTop || 0; gpx.onscroll = function () { ST.passTop = gpx.scrollTop; }; }
 }
 if ($("gSay")) $("gSay").onclick = function () { say(spoken); };
 if (q.young || q.listen || q.k === "w2p") later(function () { say(spoken); }, 350);

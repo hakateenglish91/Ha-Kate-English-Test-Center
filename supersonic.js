@@ -269,7 +269,17 @@ function build(u, g) {
   var P = pools(u), out = [];
   if (g.optsOnly) [1, 2].forEach(function (lv) { P[lv] = P[lv].filter(function (q) { return q.opts; }); });
   /* bài test có bài đọc: bớt câu các cấp để vẫn đủ 30 câu, bài đọc đặt sau phần cấp 3 */
-  if (g.test && u.read) [[5, 1], [6, 2], [6, 3], ["read"], [6, 4]].forEach(function (pl) { out = out.concat(pl[0] === "read" ? readQs(u) : pickN(P, pl[1], pl[0], "ss|" + u.n + "|" + g.n)); });
+  if (g.test && u.read) {
+    /* mỗi từ chỉ xuất hiện 1 lần trong bài test (nếu đủ câu), để học sinh không gặp lại cùng một từ */
+    var used = {}, base = function (q) { return String(q.word).replace(/^(type-|s-|t-|m2?-)/, ""); };
+    [[5, 1], [6, 2], [6, 3], ["read"], [6, 4]].forEach(function (pl) {
+      if (pl[0] === "read") { out = out.concat(readQs(u)); return; }
+      var pool = shuffle(P[pl[1]], rng("ss|" + u.n + "|test|" + pl[1])), got = [];
+      pool.forEach(function (q) { if (got.length < pl[0] && !used[base(q)]) { got.push(q); used[base(q)] = 1; } });
+      pool.forEach(function (q) { if (got.length < pl[0] && got.indexOf(q) < 0) got.push(q); });
+      out = out.concat(got);
+    });
+  }
   else g.plan.forEach(function (pl) { out = out.concat(pickN(P, pl[1], pl[0], "ss|" + u.n + "|" + g.n)); });
   return out.map(function (q, i) { var c = JSON.parse(JSON.stringify(q)); c.i = i; delete c.answered; return c; });
 }
@@ -282,6 +292,6 @@ if (GS) {
   GS.build = function (key, game) { var u = unitOfKey(key); return u ? build(u, game) : oBuild.apply(this, arguments); };
 }
 if (window.HKG && window.HKG.count) { var oc = window.HKG.count; window.HKG.count = function (x) { return x && x.k === "ss" ? 3 : oc(x); }; }
-if (typeof document !== "undefined" && !document.getElementById("ss-pass-css")) { var st = document.createElement("style"); st.id = "ss-pass-css"; st.textContent = ".gpass{background:#fff8e1;color:#3b2a10;border-radius:14px;padding:12px 14px;margin:0 0 10px;text-align:left;font-size:1rem;line-height:1.6;max-height:42vh;overflow:auto}.gpass b{display:block;font-size:1.1rem;margin-bottom:4px;color:#b2342a}.gpass p{margin:0 0 6px}"; document.head.appendChild(st); }
+if (typeof document !== "undefined" && !document.getElementById("ss-pass-css")) { var st = document.createElement("style"); st.id = "ss-pass-css"; st.textContent = ".gpass{background:#fff8e1;color:#3b2a10;border-radius:14px;padding:12px 14px;margin:0 0 10px;text-align:left;font-size:1rem;line-height:1.6;max-height:42vh;overflow:auto}.gpass b{display:block;font-size:1.1rem;margin-bottom:4px;color:#b2342a}.gpass p{margin:0 0 6px}@media (max-width:520px){.gpass{font-size:.95rem;max-height:36vh}}"; document.head.appendChild(st); }
 window.HKSS = { folder: { k: "ss", n: "Supersonic", e: "UK Phonics · Spelling Friends", c: 6 }, books: books, cards: cards, units: U, build: build, games: GAMES, pools: pools };
 })();
