@@ -73,7 +73,7 @@ var qs = GS.build(key, g), who = lsGet("hk-student") || {};
 ST = { key: key, g: g, x: x, arg: arg, qs: qs, i: 0, sc: 0, coins: 0, streak: 0, wrong: [], tug: 0, boss: 0, hp: 5, start: 0, done: false };
 box.className = "gm-wrap sk-" + g.skin;
 box.innerHTML = '<div class="gm-start">'
-+ '<div class="gs-ic">' + GS.SKINS[g.skin].ic + '</div><div class="eyebrow">Game ' + g.n + ' · ' + esc(x.b.b) + ' · Unit ' + esc(x.u.n) + '</div>'
++ '<div class="gs-ic">' + GS.SKINS[g.skin].ic + '</div><div class="eyebrow">Game ' + g.n + ' · ' + esc(x.b.b) + ' · ' + (x.u.go ? esc(x.u.lab || "Test") : 'Unit ' + esc(x.u.n)) + '</div>'
 + '<h1>' + esc(g.name) + '</h1><p>' + qs.length + ' câu hỏi. Trả lời đúng để nhận xu 🪙 và sao ⭐. Bấm 🔊 để nghe đọc.</p>'
 + '<div class="idform"><label class="f">Họ và tên<input type="text" id="gName" value="' + esc(who.name || "") + '" placeholder="VD: Nguyễn Minh Anh"></label><label class="f">Lớp<input type="text" id="gCls" value="' + esc(who.cls || "") + '" placeholder="VD: Lớp 3A"></label></div>'
 + '<div class="errmsg" id="gErr" hidden>Con điền họ tên để cô nhận được kết quả nhé.</div>'
@@ -86,7 +86,7 @@ try { AC = AC || window.__AC || new (window.AudioContext || window.webkitAudioCo
 ST.name = nm; ST.cls = $("gCls").value.trim(); ST.start = Date.now();
 box.innerHTML = '<div class="gm"><div class="gm-top"><button class="gtb" type="button" id="gQuit" aria-label="Thoát">✕</button><span class="gpill" id="gPos"></span><span class="gpill">⭐ <b id="gSc">0</b></span><span class="gpill">🪙 <b id="gCo">0</b></span><span class="gpill" id="gTime">0:00</span><button class="gtb" type="button" id="gSnd" aria-label="Âm thanh">' + (SOUND ? "🔊" : "🔇") + '</button></div>'
 + '<div class="gm-stage" id="gStage"></div><div class="gm-card" id="gCard"></div></div>';
-$("gQuit").onclick = function () { stop(); HK().go("games", arg); };
+$("gQuit").onclick = function () { stop(); if (x.u.go) HK().go("folder", x.k); else HK().go("games", arg); };
 $("gSnd").onclick = function () { SOUND = !SOUND; lsSet("hk-snd", SOUND); this.textContent = SOUND ? "🔊" : "🔇"; };
 ST.clock = setInterval(function () { var s = Math.floor((Date.now() - ST.start) / 1000); var t = $("gTime"); if (t) t.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 1000);
 initStage();
@@ -281,13 +281,13 @@ var box = document.querySelector(".gm-wrap");
 box.innerHTML = '<div class="cert" id="gCert"><span class="cs s1">★</span><span class="cs s2">★</span><span class="cs s3">★</span><span class="cs s4">★</span>'
 + '<div class="c-brand">HA KATE TEST CENTER · CLB TIẾNG ANH CÔ HÀ KATE</div><h1 class="c-title">Giấy khen phiêu lưu</h1>'
 + '<p class="c-sub">Trao tặng cho</p><div class="c-name">' + esc(ST.name) + '</div>'
-+ '<p class="c-sub">đã hoàn thành <b>Game ' + g.n + ': ' + esc(g.name) + '</b><br>' + esc(HK().folderOf(x.k).n) + ' · ' + esc(x.b.b) + ' · Unit ' + esc(x.u.n) + (x.u.t ? ": " + esc(x.u.t) : "") + '</p>'
++ '<p class="c-sub">đã hoàn thành <b>Game ' + g.n + ': ' + esc(g.name) + '</b><br>' + esc(HK().folderOf(x.k).n) + ' · ' + esc(x.b.b) + ' · ' + (x.u.go ? esc(x.u.lab || "Test") : 'Unit ' + esc(x.u.n)) + (x.u.t ? ": " + esc(x.u.t) : "") + '</p>'
 + '<div class="c-stats"><div><span>Điểm</span><b>' + sc + "/" + tot + '</b></div><div><span>Thời gian</span><b>' + Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0") + '</b></div><div><span>Xu</span><b>' + ST.coins + '</b></div><div><span>Sao</span><b>' + (stars ? "⭐".repeat(stars) : "–") + '</b></div></div>'
 + '<div class="c-foot"><span class="c-mascot">🐰</span><div><div class="c-date">Hoàn thành ngày ' + date + '</div><div class="c-code">Mã hoàn thành ' + code + '</div></div><div class="c-badge"><span>' + badge[0] + '</span><b>' + badge[1] + '</b></div></div>'
 + '<div class="c-sign"><div><i></i>Chữ ký phụ huynh</div><div><i class="hk">Ms. Hà Kate</i>Giáo viên</div></div></div>'
 + '<div class="c-send" id="gSend"><span class="spin"></span> Đang gửi kết quả cho cô…</div>'
 + (ST.wrong.length ? '<details class="c-wrong"><summary>Xem lại ' + ST.wrong.length + ' câu chưa đúng</summary><ul>' + ST.wrong.map(function (w) { return "<li><b>Câu " + w.n + ":</b> " + esc(w.q) + " → đáp án: <b>" + (/^svg:|\p{Extended_Pictographic}/u.test(w.right) ? pic(w.right, "inl") : esc(w.right)) + "</b></li>"; }).join("") + "</ul></details>" : "")
-+ '<div class="row c-btns"><button class="btn sun" type="button" id="gAgain">Chơi lại ↺</button>' + (next ? '<a class="btn" data-go="play" data-arg="' + esc(ST.arg + "~" + next.n) + '" href="#" target="_self">Game ' + next.n + ' ➜</a>' : "") + '<a class="btn ghost" data-go="games" data-arg="' + esc(ST.arg) + '" href="#" target="_self">Các game khác</a><button class="btn ghost" type="button" id="gPrint">In giấy khen 🖨️</button></div>';
++ '<div class="row c-btns"><button class="btn sun" type="button" id="gAgain">Chơi lại ↺</button>' + (next ? '<a class="btn" data-go="play" data-arg="' + esc(ST.arg + "~" + next.n) + '" href="#" target="_self">Game ' + next.n + ' ➜</a>' : "") + (x.u.go ? '<a class="btn ghost" data-go="folder" data-arg="' + esc(x.k) + '" href="#" target="_self">Về thư mục</a>' : '<a class="btn ghost" data-go="games" data-arg="' + esc(ST.arg) + '" href="#" target="_self">Các game khác</a>') + '<button class="btn ghost" type="button" id="gPrint">In giấy khen 🖨️</button></div>';
 if (stars >= 2) { confetti($("gCert")); later(function () { confetti($("gCert")); }, 500); }
 $("gAgain").onclick = function () { HK().go("play", ST.arg + "~" + g.n, true); };
 $("gPrint").onclick = function () { window.print(); };

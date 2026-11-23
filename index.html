@@ -366,7 +366,7 @@ function go(view,arg,noPush){
   $("examBar").hidden=true; stopClock(); fcStop(); try{window.HKG&&HKG.stop()}catch(e){}
   if(!noPush){var nh=view==="home"?"":"#"+view+(arg?"/"+encodeURIComponent(arg):"");if(location.hash!==nh&&!(nh===""&&!location.hash)){skipHash=true;if(nh)location.hash=nh;else history.pushState(null,"",location.pathname+location.search)}}
   if(view==="test"){var t=findTest(arg);if(t){show("vExam");openExam(t);window.scrollTo(0,0);return}}
-  if(view==="games"&&window.HKG){var gx=unitOf(arg);if(gx){show("vGames");$("gmCrumbF").textContent=gx.f.n;$("gmCrumbF").setAttribute("data-go","folder");$("gmCrumbF").setAttribute("data-arg",gx.k);$("gmCrumbU").textContent="Unit "+gx.u.n;$("gmCrumbU").setAttribute("data-go","unit");$("gmCrumbU").setAttribute("data-arg",arg);HKG.renderList($("gmBox"),gx,arg);window.scrollTo(0,0);return}}
+  if(view==="games"&&window.HKG){var gx=unitOf(arg);if(gx){show("vGames");$("gmCrumbF").textContent=gx.f.n;$("gmCrumbF").setAttribute("data-go","folder");$("gmCrumbF").setAttribute("data-arg",gx.k);$("gmCrumbU").textContent=gx.u.go?(gx.u.lab||"Test"):"Unit "+gx.u.n;$("gmCrumbU").setAttribute("data-go","unit");$("gmCrumbU").setAttribute("data-arg",arg);HKG.renderList($("gmBox"),gx,arg);window.scrollTo(0,0);return}}
   if(view==="play"&&window.HKG){var pp=String(arg||"").split("~"),pn=+pp.pop(),pa=pp.join("~"),px=unitOf(pa);if(px){show("vPlay");HKG.play($("playBox"),px,pa,pn);window.scrollTo(0,0);return}}
   if(view==="gallery"&&window.HKG){show("vGallery");HKG.galView($("galBox"));window.scrollTo(0,0);return}
   if(view==="unit"){show("vUnit");renderUnit(arg);window.scrollTo(0,0);return}
@@ -381,7 +381,7 @@ document.addEventListener("click",function(e){var a=e.target.closest("[data-go]"
 function renderHome(){try{window.HKG&&HKG.galStrip($("galStrip"))}catch(e){}
   $("totalCount").textContent=TESTS.length+" bài";
   $("folderGrid").innerHTML=FOLDERS.map(function(f){var n=TESTS.filter(function(t){return t.folder===f.k}).length;
-    return '<a class="folder k'+f.c+'" data-go="folder" data-arg="'+f.k+'" target="_self" href="#"><span class="dot"></span><span class="fn">'+esc(f.n)+'</span><span class="fe">'+esc(f.e)+'</span><span class="fc">'+(function(){var u=(CIDX[f.k]||[]).reduce(function(s,b){return s+b.u.length},0),a=[];if(u)a.push(u+" unit");if(n)a.push(n+" bài");return a.length?a.join(" · "):"Chưa có bài"})()+'</span></a>'}).join("");
+    return '<a class="folder k'+f.c+'" data-go="folder" data-arg="'+f.k+'" target="_self" href="#"><span class="dot"></span><span class="fn">'+esc(f.n)+'</span><span class="fe">'+esc(f.e)+'</span><span class="fc">'+(function(){var u=(CIDX[f.k]||[]).reduce(function(s,b){return s+b.u.filter(function(x){return !x.go}).length},0),a=[];if(u)a.push(u+" unit");if(n)a.push(n+" bài");return a.length?a.join(" · "):"Chưa có bài"})()+'</span></a>'}).join("");
 }
 function reviewOf(t){var m=String(t.id||'').match(/review-u(\d+)-(\d+)/i)||String(t.title||'').match(/Review\s*(?:Unit|U)?\s*(\d+)\s*[–—-]\s*(\d+)/i);return m?{a:+m[1],b:+m[2]}:null}
 function unitNo(t){if(reviewOf(t))return '';var m=String(t.id||'').match(/-u(\d+)(?:-|$)/)||String(t.title||'').match(/Unit\s*(\d+)/i);return m?m[1]:''}
@@ -397,7 +397,7 @@ function renderFolder(k){
   renderBooks(k,f,books,list.length);
 }
 function renderBooks(k,f,books,nt){
-  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+b.u.length+' unit · bấm vào unit để học thẻ từ</span></div><div class="units">'+b.u.map(function(u,ui){return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">'+(b.lab||'Unit')+' '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+(TESTS.some(function(t){return t.folder===k&&unitNo(t)===String(u.n)})?' · 📝 test':'')+'</span></a>'+TESTS.filter(function(t){var r=reviewOf(t);return t.folder===k&&r&&String(r.b)===String(u.n)}).map(function(t){var r=reviewOf(t);return '<a class="unit review" data-go="test" data-arg="'+esc(t.id)+'" target="_self" href="#"><span class="un">⭐ Review</span><span class="ut">Ôn tập Unit '+r.a+'–'+r.b+'</span><span class="uc">📝 '+t.q.length+' câu · '+t.minutes+' phút</span></a>'}).join("")}).join("")+'</div></div>'}).join("");
+  $("fBooks").innerHTML=books.map(function(b,bi){return '<div class="book k'+f.c+'"><div class="bookh"><span class="bk">📘</span><h2>'+esc(b.b)+'</h2><span class="note">'+(function(){var nu=b.u.filter(function(u){return !u.go}).length,nt=b.u.length-nu;return nu?nu+' unit · bấm vào unit để học thẻ từ':nt+' bài kiểm tra · bấm vào để làm bài'})()+'</span></div><div class="units">'+b.u.map(function(u,ui){if(u.go)return '<a class="unit review" data-go="play" data-arg="'+esc(k+'~'+bi+'~'+ui+'~1')+'" target="_self" href="#"><span class="un">'+esc(u.lab||'📝 Test')+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">📝 '+u.c+' câu'+(u.s?' · '+esc(u.s):'')+'</span></a>';return '<a class="unit" data-go="unit" data-arg="'+esc(k+'~'+bi+'~'+ui)+'" target="_self" href="#"><span class="un">'+(b.lab||'Unit')+' '+esc(u.n)+'</span><span class="ut">'+esc(u.t)+'</span><span class="uc">'+u.c+' thẻ từ'+(u.s?' · '+esc(u.s):'')+(window.HKG&&HKG.hasGames({k:k,b:b,u:u})?' · 🎮 game':'')+(TESTS.some(function(t){return t.folder===k&&unitNo(t)===String(u.n)})?' · 📝 test':'')+'</span></a>'+TESTS.filter(function(t){var r=reviewOf(t);return t.folder===k&&r&&String(r.b)===String(u.n)}).map(function(t){var r=reviewOf(t);return '<a class="unit review" data-go="test" data-arg="'+esc(t.id)+'" target="_self" href="#"><span class="un">⭐ Review</span><span class="ut">Ôn tập Unit '+r.a+'–'+r.b+'</span><span class="uc">📝 '+t.q.length+' câu · '+t.minutes+' phút</span></a>'}).join("")}).join("")+'</div></div>'}).join("");
   $("fBooks").hidden=!books.length; $("fTestsH").hidden=!(books.length&&nt);
 }
 function unitOf(arg){var p=String(arg||"").split("~"),k=p[0],b=(CIDX[k]||[])[+p[1]],u=b&&b.u[+p[2]];return u?{k:k,f:folderOf(k),b:b,u:u,arg:arg}:null}
@@ -597,8 +597,8 @@ run("getData").then(function(d){
 })();
 </script>
 <script src="gspec.js?v=7"></script>
-<script src="gui.js?v=9"></script>
-<script src="supersonic.js?v=5"></script>
+<script src="gui.js?v=10"></script>
+<script src="supersonic.js?v=6"></script>
 <script src="tools.js?v=2"></script>
 <script src="media.js?v=1"></script>
 <script src="quiz.js?v=8"></script>

@@ -284,12 +284,152 @@ function build(u, g) {
   return out.map(function (q, i) { var c = JSON.parse(JSON.stringify(q)); c.i = i; delete c.answered; return c; });
 }
 function unitOfKey(key) { var m = /^ss\|[^|]+\|(\d+)$/.exec(key || ""); if (!m) return null; for (var i = 0; i < U.length; i++) if (String(U[i].n) === m[1]) return U[i]; return null; }
+/* ---------- bài test soạn sẵn (24/11/2026) ----------
+   R9 = phiếu ôn tập Prefix un- (từ 2 PowerPoint "Adding the prefix un" + "Using the prefix un"), ô ⭐ Review ngay sau Unit 9.
+   T1 = bài test độc lập Year 3 Birch – Term 1 (English, Maths, Science: Light, Wider curriculum), khối riêng trong thư mục Supersonic.
+   Câu: mc(cấp, lệnh, câu hỏi, [phương án], đáp án, hình) · ty(cấp, lệnh, câu hỏi, đáp án, hình, đọc) · tl(cấp, từ, hình) · od(cấp, "câu", dấu câu, hình) */
+function mc(lv, ins, q, o, a, p, x) { var r = { k: "xmc", lv: lv, ins: ins, q: q, opts: o, ans: a, p: p || "", say: "", ask: "" }; for (var k in (x || {})) r[k] = x[k]; return r; }
+function ty(lv, ins, q, t, p, s) { return { k: "type", lv: lv, ins: ins, q: q, target: t, p: p || "", say: s || "", ask: s || "", listen: !!s }; }
+function tl(lv, w, p) { return { k: "tiles", lv: lv, ins: "Listen and put the letters in order.", q: "Make the word.", target: w, p: p || "", say: w, ask: w, listen: true }; }
+function od(lv, s, end, p) { return { k: "order", lv: lv, ins: "Put the words in order to make a sentence.", q: "Put the words in order.", target: s, end: end, p: p || "", say: "", ask: "" }; }
+function passH(title, text) { return "<b>" + esc(title) + "</b>" + text.split("\n").map(function (x) { return "<p>" + esc(x) + "</p>"; }).join(""); }
+var UNSTORY = passH("The Muddled Wizard", "A naughty wizard has moved un- to the WRONG words in this story. Can you fix the words in CAPITALS?\nQueen Rosa was very UNKIND. She helped everybody, and all the people in her land loved her.\nOne day, a TRUTHFUL wizard came to the castle. He told lies all day long!\nHe put a spell on every door so that they were always UNLOCKED. Nobody could get in or out.\nThen he UNBLOCKED all the taps, so no water came out at all.\n\"Why are you being so HELPFUL?\" asked the queen. \"I am not afraid of you!\"");
+var TROLL = passH("How to Trap a Troll", "You will need: a big net, a strong rope, three cheese sandwiches and a torch.\n1. First, find a bridge where a troll lives. Listen for loud snoring!\n2. Next, put the sandwiches in a line on the bridge.\n3. Then, hide behind a tree and stay very quiet.\n4. When the troll comes out to eat the sandwiches, quickly throw the net over it.\n5. Finally, tie the net with the rope and shine your torch to check your troll.");
+var LETTER = passH("A letter to Mrs Green", "14 Oak Lane, Bristol, BS1 4AB\n15th September 2026\nDear Mrs Green,\nI am writing to say sorry that my homework is late. Last night, a giant snail slid across my book and left sticky slime on every page! I will write it again tonight.\nYours sincerely,\nLeo");
+var XT = [
+{ book: BOOK, n: "R9", lab: "⭐ Review", t: "Prefix un- · Ôn tập", s: "un-", name: "⭐ Review test · Prefix un- (40 câu)", qs: [
+  /* Part 1 – un- machine */
+  mc(1, "Part 1 · The un- machine adds un- to a word. Choose the new word.", "un + true = ____", ["untrue", "untru", "unntrue", "ontrue"], 0, "⚙️"),
+  mc(1, "Part 1 · The un- machine adds un- to a word. Choose the new word.", "un + usual = ____", ["unusal", "unusual", "unnusual", "unuseful"], 1, "⚙️"),
+  mc(1, "Part 1 · The un- machine adds un- to a word. Choose the new word.", "un + healthy = ____", ["unhelthy", "unhealty", "unhealthy", "unnhealthy"], 2, "⚙️"),
+  mc(1, "Part 1 · The un- machine adds un- to a word. Choose the new word.", "un + certain = ____", ["unsertain", "uncertin", "unncertain", "uncertain"], 3, "⚙️"),
+  mc(1, "Part 1 · The un- machine adds un- to a word. Choose the new word.", "un + even = ____", ["uneven", "unevan", "unneven", "uneaven"], 0, "⚙️"),
+  /* Part 2 – back to the root word */
+  mc(1, "Part 2 · What went INTO the un- machine? Find the root word.", "unclean → ____", ["lean", "clean", "unclea", "cleen"], 1, "🧼"),
+  mc(1, "Part 2 · What went INTO the un- machine? Find the root word.", "unplug → ____", ["plug", "lug", "unplu", "pluge"], 0, "🔌"),
+  mc(1, "Part 2 · What went INTO the un- machine? Find the root word.", "unknot → ____", ["not", "nut", "knot", "unk"], 2, "🪢"),
+  mc(1, "Part 2 · What went INTO the un- machine? Find the root word.", "unable → ____", ["table", "nable", "abel", "able"], 3, "💪"),
+  /* Part 3 – meaning */
+  mc(2, "Part 3 · Choose the meaning.", "The prefix un- means …", ["very", "more than one", "NOT, or the opposite of", "again"], 2, "💡"),
+  mc(2, "Part 3 · Choose the meaning.", "What does “uncover” mean?", ["to take a cover off something", "to put a cover on something", "to cover it again", "to buy a new cover"], 0, "🍲"),
+  mc(2, "Part 3 · Choose the meaning.", "What does “uncertain” mean?", ["very sure", "not sure", "late", "angry"], 1, "🤔"),
+  mc(2, "Part 3 · Choose the meaning.", "Everyone got a sweet except Mia. “That's unfair!” This means …", ["it is very fair", "it is fun", "it is not fair", "it is easy"], 2, "🍬"),
+  /* Part 4 – opposites */
+  mc(2, "Part 4 · Find the opposite. One word in each pair starts with un-.", "This banana is green. It is not ripe. It is ____.", ["ripen", "unripe", "unripped", "ripe"], 1, "🍌"),
+  mc(2, "Part 4 · Find the opposite. One word in each pair starts with un-.", "What is the opposite of “load”?", ["unload", "upload", "loaded", "unlode"], 0, "🚚"),
+  mc(2, "Part 4 · Find the opposite. One word in each pair starts with un-.", "The road has lots of bumps and holes. It is ____.", ["even", "uneaven", "uneven", "evenly"], 2, "🛣️"),
+  mc(2, "Part 4 · Find the opposite. One word in each pair starts with un-.", "Nobody knows the name of this singer. She is ____.", ["known", "unknow", "unkown", "unknown"], 3, "🎤"),
+  /* Part 5 – real or fake */
+  mc(2, "Part 5 · Real or fake? Some words make a REAL word with un-, some make a FAKE word.", "Which one is a REAL word?", ["unhat", "unzebra", "unscrew", "unleaf"], 2, "🪙"),
+  mc(2, "Part 5 · Real or fake? Some words make a REAL word with un-, some make a FAKE word.", "Which one is a REAL word?", ["unloved", "unshout", "unhat", "unzebra"], 0, "🪙"),
+  mc(2, "Part 5 · Real or fake? Some words make a REAL word with un-, some make a FAKE word.", "Which one is a FAKE word?", ["unwind", "unsurprising", "unscrew", "unshout"], 3, "🪙"),
+  mc(2, "Part 5 · Real or fake? Some words make a REAL word with un-, some make a FAKE word.", "“unleaf” is …", ["a real word", "a fake word"], 1, "🍃"),
+  /* Part 6 – un- trains */
+  mc(3, "Part 6 · Join the word carriages to the un- train. Choose the word that fits.", "The knight will ____ the dragon so it can fly away.", ["unstick", "unchain", "unfit", "undo"], 1, "🐉"),
+  mc(3, "Part 6 · Join the word carriages to the un- train. Choose the word that fits.", "Nobody played with the old teddy bear. It felt ____.", ["unwanted", "unchained", "unstuck", "unfit"], 0, "🧸"),
+  mc(3, "Part 6 · Join the word carriages to the un- train. Choose the word that fits.", "The pages of my art book are glued together. I will carefully ____ them.", ["unchain", "undo", "unstick", "unwant"], 2, "📒"),
+  mc(3, "Part 6 · Join the word carriages to the un- train. Choose the word that fits.", "The old bed was broken and lumpy. It was ____ for a queen!", ["unwanted", "unstuck", "unchained", "unfit"], 3, "🛏️"),
+  /* Part 7 – sentences */
+  mc(3, "Part 7 · Add un- and complete the sentence.", "It is ____ to eat too much chocolate.", ["healthy", "unhealthy", "unhappy", "unwell"], 1, "🍫"),
+  mc(3, "Part 7 · Add un- and complete the sentence.", "It is ____ to call people names.", ["unkind", "kind", "unlucky", "untidy"], 0, "🗯️"),
+  mc(3, "Part 7 · Add un- and complete the sentence.", "I was very ____ when my best friend moved schools.", ["happy", "unwrap", "unhappy", "unlucky"], 2, "😢"),
+  mc(3, "Part 7 · Add un- and complete the sentence.", "How ____ that they got caught in the rain without an umbrella!", ["lucky", "unwell", "unkind", "unlucky"], 3, "🌧️"),
+  /* Part 8 – muddled story */
+  mc(3, "Part 8 · Read the story. Fix the word in CAPITALS.", "“Queen Rosa was very UNKIND. She helped everybody.” The correct word is …", ["unkind", "kind"], 1, "", { pass: UNSTORY }),
+  mc(3, "Part 8 · Read the story. Fix the word in CAPITALS.", "“A TRUTHFUL wizard … told lies all day long!” The correct word is …", ["untruthful", "truthful"], 0, "", { pass: UNSTORY }),
+  mc(3, "Part 8 · Read the story. Fix the word in CAPITALS.", "“The doors were always UNLOCKED. Nobody could get in or out.” The correct word is …", ["unlocked", "locked"], 1, "", { pass: UNSTORY }),
+  mc(3, "Part 8 · Read the story. Fix the word in CAPITALS.", "“He UNBLOCKED all the taps, so no water came out.” The correct word is …", ["blocked", "unblocked"], 0, "", { pass: UNSTORY }),
+  mc(3, "Part 8 · Read the story. Fix the word in CAPITALS.", "“Why are you being so HELPFUL?” The correct word is …", ["helpful", "unhelpful"], 1, "", { pass: UNSTORY }),
+  mc(3, "Part 8 · Read the story. Choose the best answer.", "What should the queen do next to help her people get out of the castle?", ["lock the doors", "unlock the doors", "unblock the wizard", "untie the taps"], 1, "", { pass: UNSTORY }),
+  /* Part 9 – spelling */
+  tl(4, "unclear", "🌫️"),
+  tl(4, "unusual", "🦄"),
+  ty(4, "Part 9 · Listen and write the word.", "un + fair", "unfair", "⚖️", "unfair"),
+  ty(4, "Part 9 · Listen and write the word.", "un + cover", "uncover", "🍲", "uncover"),
+  ty(4, "Part 9 · Listen and write the word.", "un + pleasant", "unpleasant", "🦨", "unpleasant")
+] },
+{ book: "Year 3 Birch · Term 1", n: "T1", lab: "📝 Test", t: "Term 1 Test · English, Maths, Science, Wider curriculum", s: "Year 3", name: "📝 Year 3 Term 1 Test (50 câu)", qs: [
+  /* Part A – English */
+  mc(1, "Part A · English · Read the instructions and choose the best answer.", "What do you need to trap a troll?", ["a net, a rope, sandwiches and a torch", "a bike, a hat and a map", "a box, some glue and a pencil", "a goat and a bridge"], 0, "", { pass: TROLL }),
+  mc(1, "Part A · English · Read the instructions and choose the best answer.", "What should you do FIRST?", ["Throw the net.", "Find a bridge where a troll lives.", "Tie the rope.", "Eat the sandwiches."], 1, "", { pass: TROLL }),
+  mc(2, "Part A · English · Read the instructions and choose the best answer.", "“Hide behind a tree.” Which word is the bossy verb (imperative verb)?", ["behind", "tree", "Hide", "a"], 2, "", { pass: TROLL }),
+  mc(2, "Part A · English · Read the instructions and choose the best answer.", "Why are the steps numbered?", ["to make them look pretty", "so you do them in the right order", "because trolls like numbers", "to make the text longer"], 1, "", { pass: TROLL }),
+  mc(2, "Part A · English · Choose the best answer.", "Which time word comes LAST in instructions?", ["First", "Next", "Then", "Finally"], 3, "🔢"),
+  mc(1, "Part A · English · Read the letter and choose the best answer.", "Why did Leo write the letter?", ["to invite Mrs Green to a party", "to say sorry that his homework is late", "to ask for a pet snail", "to tell a joke"], 1, "", { pass: LETTER }),
+  mc(2, "Part A · English · Read the letter and choose the best answer.", "Where does the address go in a letter?", ["at the top", "in the middle", "after “Yours sincerely”", "on the back"], 0, "", { pass: LETTER }),
+  mc(2, "Part A · English · Choose the best answer.", "Which is the best way to START a letter to your teacher?", ["Hi mate!", "Bye, Mrs Green.", "Dear Mrs Green,", "Yours sincerely,"], 2, "✉️"),
+  mc(2, "Part A · English · Choose the best answer.", "Which is the best way to END a letter to your teacher?", ["See ya!", "Dear Leo,", "Once upon a time", "Yours sincerely,"], 3, "✍️"),
+  mc(2, "Part A · English · Choose the correct sentence.", "Which sentence has the correct capital letters and full stop?", ["my teacher is called mrs green.", "My teacher is called Mrs Green.", "My teacher is called mrs green", "my Teacher is called Mrs Green"], 1, "✏️"),
+  mc(2, "Part A · English · Which word is spelt correctly?", "Which word is spelt correctly?", ["adress", "addres", "address", "adresss"], 2, "🏠"),
+  od(3, "I am writing to say thank you", ".", "💌"),
+  /* Part B – Maths */
+  mc(1, "Part B · Maths · Place value.", "What is the value of the 4 in 347?", ["4", "40", "400", "7"], 1, "🔢"),
+  mc(1, "Part B · Maths · Place value.", "500 + 60 + 2 = ____", ["562", "526", "5602", "652"], 0, "🧮"),
+  mc(1, "Part B · Maths · Place value.", "Which number has 3 hundreds, 0 tens and 8 ones?", ["380", "38", "803", "308"], 3, "💯"),
+  mc(2, "Part B · Maths · Place value.", "What is 10 more than 495?", ["496", "595", "505", "405"], 2, "➕"),
+  mc(2, "Part B · Maths · Place value.", "What is 100 less than 712?", ["612", "702", "711", "602"], 0, "➖"),
+  mc(2, "Part B · Maths · Compare numbers.", "Which is correct?", ["456 > 465", "309 < 390", "721 < 712", "158 > 185"], 1, "⚖️"),
+  mc(2, "Part B · Maths · Order numbers.", "Which list goes from SMALLEST to LARGEST?", ["921, 912, 291, 199", "291, 199, 912, 921", "199, 291, 912, 921", "199, 912, 291, 921"], 2, "📈", { keep: 1 }),
+  ty(2, "Part B · Maths · Write the answer (numbers only).", "234 + 5 = ____", "239", "🧮"),
+  ty(2, "Part B · Maths · Write the answer (numbers only).", "450 + 30 = ____", "480", "🧮"),
+  ty(3, "Part B · Maths · Write the answer (numbers only).", "678 − 200 = ____", "478", "🧮"),
+  mc(3, "Part B · Maths · Column addition.", "345 + 238 = ____", ["573", "583", "5713", "593"], 1, "📝"),
+  mc(3, "Part B · Maths · Missing number.", "____ + 300 = 1000", ["700", "600", "1300", "800"], 0, "❓"),
+  ty(4, "Part B · Maths · Word problem. Write the answer (numbers only).", "The school library has 265 books. 40 books are borrowed. How many books are left?", "225", "📚"),
+  /* Part C – Science: Light */
+  mc(1, "Part C · Science · Light.", "Which of these is a SOURCE of light?", ["the Moon", "a mirror", "the Sun", "a spoon"], 2, "💡"),
+  mc(1, "Part C · Science · Light.", "What do we need to be able to see things?", ["light", "sound", "wind", "water"], 0, "👀"),
+  mc(2, "Part C · Science · Light.", "Dark is …", ["a kind of light", "the absence (lack) of light", "a shadow from the Moon", "a colour of light"], 1, "🌑"),
+  mc(2, "Part C · Science · Light.", "The Moon is NOT a light source. Why can we see it at night?", ["It makes its own light.", "It is on fire.", "It reflects light from the Sun.", "Stars shine on it from inside."], 2, "🌕"),
+  mc(2, "Part C · Science · Light.", "Which surface reflects light the BEST?", ["a dark carpet", "black card", "a wooden table", "a shiny mirror"], 3, "🪞"),
+  mc(2, "Part C · Science · Light.", "Why must you NEVER look straight at the Sun?", ["It can damage your eyes.", "It makes you sleepy.", "It makes the Sun go away.", "It is too far away."], 0, "🕶️"),
+  mc(2, "Part C · Science · Light.", "A shadow is made when …", ["light goes through glass", "an object blocks the light", "a mirror reflects the light", "the light is very bright"], 1, "👤"),
+  mc(3, "Part C · Science · Light.", "Clear window glass lets almost all the light through. It is …", ["opaque", "translucent", "transparent", "reflective"], 2, "🪟"),
+  mc(3, "Part C · Science · Light.", "Which object makes the DARKEST shadow?", ["a glass jar", "a piece of tissue paper", "a clear plastic bag", "a wooden block"], 3, "🧱"),
+  mc(3, "Part C · Science · Light.", "You move a torch CLOSER to a toy. What happens to the toy's shadow?", ["It gets bigger.", "It gets smaller.", "It disappears.", "It changes colour."], 0, "🔦"),
+  /* Part D – Wider curriculum */
+  mc(1, "Part D · RE · Christianity.", "What is the holy book of Christians called?", ["the Bible", "the dictionary", "the atlas", "the menu"], 0, "📖"),
+  mc(1, "Part D · RE · Christianity.", "Where do many Christians go to pray and worship together?", ["a library", "a church", "a museum", "a stadium"], 1, "⛪"),
+  mc(2, "Part D · Geography · Areas of different sizes.", "Which list goes from SMALLEST to LARGEST?", ["country, town, street, continent", "street, town, country, continent", "continent, country, town, street", "town, street, continent, country"], 1, "🗺️", { keep: 1 }),
+  mc(2, "Part D · Geography · Areas of different sizes.", "Which one is a CONTINENT?", ["London", "England", "Europe", "Bristol"], 2, "🌍"),
+  mc(1, "Part D · PE · Football.", "Moving the ball along with small kicks as you run is called …", ["dribbling", "catching", "throwing", "skipping"], 0, "⚽"),
+  mc(2, "Part D · Art · Henri Matisse.", "Henri Matisse was a famous artist from …", ["Japan", "France", "Brazil", "Egypt"], 1, "🎨"),
+  mc(2, "Part D · Art · Collage.", "In his later years, Matisse made bright pictures by …", ["taking photos", "building with clay", "cutting out shapes from painted paper", "drawing only in pencil"], 2, "✂️"),
+  mc(2, "Part D · Music · Recorders.", "How should you blow into a recorder?", ["very hard", "gently", "with your nose", "while you sing"], 1, "🎵"),
+  mc(3, "Part D · Music · Recorders.", "Which hand goes at the TOP of the recorder?", ["your left hand", "your right hand", "both hands at the bottom", "no hands"], 0, "🤚"),
+  mc(1, "Part D · PSHE · Me and my relationships.", "A child in your class looks sad and alone. What is a kind thing to do?", ["laugh at them", "ignore them", "ask if they are OK and invite them to play", "tell everyone"], 2, "🤝"),
+  mc(2, "Part D · PSHE · Me and my relationships.", "You and your friend fall out. What is a good way to fix it?", ["shout louder", "never talk again", "take their things", "talk calmly and listen to each other"], 3, "💬"),
+  mc(2, "Part D · Computing · Systems and networks.", "Which of these is an INPUT device?", ["a keyboard", "a speaker", "a printer", "a screen"], 0, "⌨️"),
+  mc(3, "Part D · Computing · Systems and networks.", "A computer network is …", ["one computer on its own", "computers connected together to share information", "a fishing net for computers", "a game on a tablet"], 1, "🌐"),
+  mc(1, "Part D · French.", "“Bonjour” means …", ["goodbye", "thank you", "hello", "yes"], 2, "🇫🇷"),
+  mc(2, "Part D · French.", "How do you say “thank you” in French?", ["merci", "oui", "au revoir", "non"], 0, "🇫🇷")
+] }
+];
+function buildX(x) {
+  var R = rng("ssx|" + x.n);
+  return x.qs.map(function (q, i) {
+    var c = JSON.parse(JSON.stringify(q)); c.i = i; c.young = false; c.word = "x" + x.n + "-" + i;
+    if (c.opts && c.opts.length > 2 && !c.keep) { var right = c.opts[c.ans]; c.opts = shuffle(c.opts, R); c.ans = c.opts.indexOf(right); }
+    if (c.k === "tiles") { var t, n = 0; do { t = shuffle(c.target.split(""), R); } while (t.join("") === c.target && ++n < 30); c.tiles = t; }
+    if (c.k === "order") { var w = c.target.split(" "), t2, m = 0; do { t2 = shuffle(w, R); } while (t2.join(" ") === c.target && ++m < 30); c.tiles = t2; }
+    return c;
+  });
+}
+var XKEY = {};
+XT.forEach(function (x) {
+  var key = "ss|" + x.book + "|" + x.n, bk = books.filter(function (b) { return b.b === x.book; })[0];
+  if (!bk) { bk = { b: x.book, u: [] }; books.push(bk); }
+  bk.u.push({ n: x.n, t: x.t, s: x.s, c: x.qs.length, lab: x.lab, go: 1 });
+  x.games = [{ n: 1, skin: "tug", name: x.name, plan: [[x.qs.length, 3]], test: true }];
+  XKEY[key] = x;
+});
 /* ---------- gắn vào hệ thống game sẵn có ---------- */
 var GS = window.HKGS;
 if (GS) {
   U.forEach(function (u) { GS.SPEC["ss|" + BOOK + "|" + u.n] = { title: u.t, sound: u.s, games: GAMES, ss: true }; });
+  Object.keys(XKEY).forEach(function (k) { GS.SPEC[k] = { title: XKEY[k].t, sound: XKEY[k].s, games: XKEY[k].games, ss: true, xt: true }; });
   var oBuild = GS.build;
-  GS.build = function (key, game) { var u = unitOfKey(key); return u ? build(u, game) : oBuild.apply(this, arguments); };
+  GS.build = function (key, game) { if (XKEY[key]) return buildX(XKEY[key]); var u = unitOfKey(key); return u ? build(u, game) : oBuild.apply(this, arguments); };
 }
 if (window.HKG && window.HKG.count) { var oc = window.HKG.count; window.HKG.count = function (x) { return x && x.k === "ss" ? 3 : oc(x); }; }
 if (typeof document !== "undefined" && !document.getElementById("ss-pass-css")) { var st = document.createElement("style"); st.id = "ss-pass-css"; st.textContent = ".gpass{background:#fff8e1;color:#3b2a10;border-radius:14px;padding:12px 14px;margin:0 0 10px;text-align:left;font-size:1rem;line-height:1.6;max-height:42vh;overflow:auto}.gpass b{display:block;font-size:1.1rem;margin-bottom:4px;color:#b2342a}.gpass p{margin:0 0 6px}@media (max-width:520px){.gpass{font-size:.95rem;max-height:36vh}}"; document.head.appendChild(st); }
