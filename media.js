@@ -179,3 +179,49 @@ DATA.forEach(function (F) {
 });
 window.HKX = OUT;
 })();
+
+/* ---------- Video phonics trong unit (thêm 26/11) ----------
+   Thêm video: đặt file mp4 vào thư mục video/ trên GitHub rồi thêm 1 dòng vào PV.
+   Khóa = "mã lớp|số unit" (VD "kinder|2", "g1|6"). */
+(function () {
+"use strict";
+var PV = {
+  "kinder|2": [
+    { t: "Phonics F – Video 1", d: "fish, fin, fan, farm, fork", src: "kinder-u2-f-1.mp4" },
+    { t: "Phonics F – Video 2", d: "fish, fin, fan, farm, fork, frog, fox, fix, fun", src: "kinder-u2-f-2.mp4" }],
+  "g1|6": [
+    { t: "Phonics E", d: "bell, red, pen, pencil, men, hen, Ben, ten, lens, egg, desk, bed, pet", src: "g1-u6-e.mp4" }]
+};
+var $ = function (i) { return document.getElementById(i); };
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function css() {
+  if ($("pvCss")) return; var s = document.createElement("style"); s.id = "pvCss";
+  s.textContent = ".uact.pv{background:linear-gradient(135deg,#e53935,#c62828);color:#fff;cursor:pointer;border:0;text-align:left;font:inherit}" +
+    ".uact.pv b{font-size:1.15rem}.uact.pv .ic{font-size:2.2rem}.uact.pv .btn{align-self:flex-start;background:#fff;color:#c62828}" +
+    ".pvlb{position:fixed;inset:0;z-index:9999;background:rgba(10,20,40,.88);display:flex;align-items:center;justify-content:center;padding:12px}" +
+    ".pvlb video{max-width:100%;max-height:calc(100vh - 80px);border-radius:16px;background:#000;box-shadow:0 10px 40px rgba(0,0,0,.5)}" +
+    ".pvlb .pvx{position:absolute;top:10px;right:12px;width:46px;height:46px;border-radius:50%;border:0;background:#fff;color:#c62828;font-size:24px;font-weight:800;cursor:pointer}" +
+    ".pvlb .pvt{position:absolute;top:18px;left:16px;right:70px;color:#fff;font-weight:700}";
+  document.head.appendChild(s);
+}
+function play(v) {
+  css(); var d = document.createElement("div"); d.className = "pvlb";
+  d.innerHTML = '<div class="pvt">🎄 ' + esc(v.t) + '</div><video src="' + esc(v.src) + '" controls autoplay playsinline preload="auto"></video><button class="pvx" type="button" aria-label="Đóng">✕</button>';
+  function close() { var vd = d.querySelector("video"); try { vd.pause(); } catch (e) {} d.remove(); document.removeEventListener("keydown", key); }
+  function key(e) { if (e.key === "Escape") close(); }
+  d.querySelector(".pvx").onclick = close; d.onclick = function (e) { if (e.target === d) close(); };
+  document.addEventListener("keydown", key); document.body.appendChild(d);
+}
+function inject() {
+  var box = $("uActs"); if (!box || box.querySelector(".pv")) return;
+  var m = location.hash.match(/^#\/?unit\/([^~]+)~/); if (!m) return;
+  var k = decodeURIComponent(m[1]), cr = $("uCrumb"), n = cr && (cr.textContent.match(/(\d+)\s*$/) || [])[1];
+  var L = PV[k + "|" + n]; if (!L) return;
+  css();
+  var h = L.map(function (v, i) { return '<button type="button" class="uact pv" data-pv="' + i + '"><span class="ic">🎬</span><b>' + esc(v.t) + '</b><span>' + esc(v.d) + '</span><span class="btn small">▶ Xem video</span></button>'; }).join("");
+  box.insertAdjacentHTML("afterbegin", h);
+  Array.prototype.forEach.call(box.querySelectorAll(".pv"), function (b) { b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); play(L[+b.getAttribute("data-pv")]); }; });
+}
+function start() { var box = $("uActs"); if (!box) return; new MutationObserver(inject).observe(box, { childList: true }); inject(); }
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+})();
