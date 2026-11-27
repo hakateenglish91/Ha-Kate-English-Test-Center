@@ -189,6 +189,10 @@ var PV = {
   "kinder|2": [
     { t: "Phonics F – Video 1", d: "fish, fin, fan, farm, fork", src: "kinder-u2-f-1.mp4" },
     { t: "Phonics F – Video 2", d: "fish, fin, fan, farm, fork, frog, fox, fix, fun", src: "kinder-u2-f-2.mp4" }],
+  "g2|6": [
+    { t: "Phonics X", d: "ox, box, fox, x-ray, mix, fix, six, T-rex, farm, can, see, is, isn't, there", src: "g2-u6-x.mp4" }],
+  "g2|7": [
+    { t: "Phonics J", d: "jam, jelly, juice, jet, jump, jog, kitchen, like, pass, I, me, please, here", src: "g2-u7-j.mp4" }],
   "g1|6": [
     { t: "Phonics E", d: "bell, red, pen, pencil, men, hen, Ben, ten, lens, egg, desk, bed, pet", src: "g1-u6-e.mp4" }]
 };
